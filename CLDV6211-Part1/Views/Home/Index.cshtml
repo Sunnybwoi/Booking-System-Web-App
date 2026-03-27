@@ -1,0 +1,299 @@
+﻿@using CLDV6211_POE_PART1
+@using CLDV6211_POE_PART1.Models
+<!--
+    Home/Index.cshtml - The main landing page for the EventEase application. 
+    It provides an overview of the application's features and quick access to key sections like Venues, Events, and Bookings. 
+    The design is modern and user-friendly, with a focus on clear navigation and visual appeal.
+    Generated with the assistance from Anthropic's Claude Sonnet 4.6, 
+    using Microsoft Visual Studio IntelliSense for code completion and best practices in ASP.NET Core MVC development.
+-->
+@{
+    ViewData["Title"] = "EventEase - Venue Booking System";// Set the page title for SEO and browser display
+    var venues = ViewBag.Venues as List<Venue> ?? new List<Venue>();// Retrieve the list of venues from the ViewBag, or initialize an empty list if it's null
+    var events = ViewBag.Events as List<Event> ?? new List<Event>();// Retrieve the list of events from the ViewBag, or initialize an empty list if it's null
+}
+
+<!-- Hero Section 
+    It's the first thing users see, so it should be visually appealing and clearly communicate the purpose of the application. 
+    It includes a catchy tagline, a logo, and quick links to key sections like Venues, Events, and Bookings. 
+    The design uses a modern color scheme with gradients and rounded corners to create a welcoming atmosphere.
+-->
+<div class="hero-section text-white text-center py-5 mb-4"
+     style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 12px;">
+    <div class="container"> 
+        <img src="https://placehold.co/120x120/e94560/white?text=EE"
+             alt="EventEase Logo"
+             class="mb-3 rounded-circle"
+             style="border: 3px solid #e94560;" />
+        <h1 class="display-4 fw-bold">EventEase</h1>
+        <p class="lead mb-4">Your all-in-one Venue Booking and Event Management Platform</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a asp-controller="Venues" asp-action="Index"
+               class="btn btn-lg px-4"
+               style="background-color:#e94560; color:white; border-radius:8px;">
+                Browse Venues
+            </a>
+            <a asp-controller="Events" asp-action="Index"
+               class="btn btn-lg px-4"
+               style="background-color:#0f3460; color:white; border:2px solid #e94560; border-radius:8px;">
+                View Events
+            </a>
+            <a asp-controller="Bookings" asp-action="Index"
+               class="btn btn-lg px-4"
+               style="background-color:transparent; color:white; border:2px solid white; border-radius:8px;">
+                Manage Bookings
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Bar 
+    This section provides a quick snapshot of the application's key metrics, such as total venues, upcoming events, and active bookings. 
+    It uses a clean card design with icons and contrasting colors to make the information easily digestible at a glance.
+-->
+<div class="row text-center mb-5">
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-0 py-3" style="border-left: 4px solid #e94560 !important; border-radius:10px;">
+            <div class="card-body">
+                <h2 class="fw-bold" style="color:#e94560;">🏛️</h2>
+                <h5 class="fw-bold">Venue Management</h5>
+                <p class="text-muted small">Add, update, and manage all available venues with capacity and location info.</p>
+                <a asp-controller="Venues" asp-action="Create" class="btn btn-sm btn-outline-danger">+ Add Venue</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-0 py-3" style="border-left: 4px solid #0f3460 !important; border-radius:10px;">
+            <div class="card-body">
+                <h2 class="fw-bold" style="color:#0f3460;">📅</h2>
+                <h5 class="fw-bold">Event Scheduling</h5>
+                <p class="text-muted small">Schedule events at venues, set start and end dates, and avoid conflicts.</p>
+                <a asp-controller="Events" asp-action="Create" class="btn btn-sm btn-outline-primary">+ Add Event</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-0 py-3" style="border-left: 4px solid #28a745 !important; border-radius:10px;">
+            <div class="card-body">
+                <h2 class="fw-bold" style="color:#28a745;">📋</h2>
+                <h5 class="fw-bold">Booking Management</h5>
+                <p class="text-muted small">Create and manage bookings with unique IDs and prevent double bookings.</p>
+                <a asp-controller="Bookings" asp-action="Create" class="btn btn-sm btn-outline-success">+ New Booking</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Venues Section 
+    This section highlights featured venues with images, names, locations, and capacities. 
+    It uses a card layout with hover effects to make it visually appealing and encourages users to explore the venue details.
+-->
+<div class="mb-5">
+    <h3 class="fw-bold mb-4 border-bottom pb-2">🏛️ Featured Venues</h3>
+    @if (!venues.Any())// If there are no venues available, display a friendly message and a call-to-action to add the first venue
+    {
+        <div class="text-center py-5 text-muted">
+            <h1>🏛️</h1>
+            <h5>No Current Venues</h5>
+            <p class="small">Get started by adding your first venue.</p>
+            <a asp-controller="Venues" asp-action="Create" class="btn btn-sm btn-outline-danger">+ Add Venue</a>
+        </div>
+    }
+    else// If there are venues available, display them in a responsive grid layout with cards for each venue
+    {
+        <div class="row">
+            @foreach (var venue in venues)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow border-0 h-100" style="border-radius:12px; overflow:hidden;">
+                        @if (!string.IsNullOrEmpty(venue.ImageURL))// If the venue has an image URL, display the image with a fallback in case of an error
+                        {
+                            <img src="@venue.ImageURL" class="card-img-top" alt="@venue.Name"
+                                 style="height:200px; object-fit:cover;"
+                                 onerror="this.src='https://placehold.co/600x300/0f3460/white?text=No+Image'" />
+                        }
+                        else// If there is no image URL, display a placeholder image
+                        {
+                            <img src="https://placehold.co/600x300/0f3460/white?text=No+Image"
+                                 class="card-img-top" alt="@venue.Name" style="height:200px; object-fit:cover;" />
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">@venue.Name</h5>
+                            <p class="text-muted small">📍 @venue.Location | 👥 Capacity: @venue.Capacity</p>
+                        </div>
+                        <div class="card-footer bg-white border-0">
+                            <a asp-controller="Venues" asp-action="Details" asp-route-id="@venue.VenueID"
+                               class="btn btn-sm w-100"
+                               style="background-color:#e94560; color:white; border-radius:8px;">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- Upcoming Events Section 
+    This section showcases upcoming events with images, names, venues, and dates.
+-->
+<div class="mb-5">
+    <h3 class="fw-bold mb-4 border-bottom pb-2">📅 Upcoming Events</h3>
+    @if (!events.Any())// If there are no events available, display a friendly message and a call-to-action to add the first event
+    {
+        <div class="text-center py-5 text-muted">
+            <h1>📅</h1>
+            <h5>No Current Events</h5>
+            <p class="small">No events have been scheduled yet.</p>
+            <a asp-controller="Events" asp-action="Create" class="btn btn-sm btn-outline-primary">+ Add Event</a>
+        </div>
+    }
+    else// If there are events available, display them in a responsive grid layout with cards for each event
+    {
+        <div class="row">
+            @foreach (var ev in events)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow border-0 h-100" style="border-radius:12px; overflow:hidden;">
+                        <img src="https://placehold.co/600x300/0f3460/white?text=Event"
+                             class="card-img-top" alt="@ev.Name" style="height:180px; object-fit:cover;" />
+                        <div class="card-body">
+                            <span class="badge mb-2" style="background-color:#e94560;">
+                                @(ev.StartDate > DateTime.Now ? "Upcoming" : "Ongoing")
+                            </span>
+                            <h5 class="card-title fw-bold">@ev.Name</h5>
+                            <p class="text-muted small">
+                                📍 @(ev.Venue != null ? ev.Venue.Name : "No Venue") |
+                                🗓️ @ev.StartDate.ToString("dd MMM") – @ev.EndDate.ToString("dd MMM yyyy")
+                            </p>
+                        </div>
+                        <div class="card-footer bg-white border-0">
+                            <a asp-controller="Bookings" asp-action="Create"
+                               class="btn btn-sm w-100 btn-outline-success">
+                                Book Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- Bookings Section 
+    This section lists all current bookings with details such as booking ID, customer name, event name, venue name, booking date, and status. 
+    It uses a clean list layout with badges to indicate the status of each booking and quick access to view details.
+-->
+<div class="mb-5">
+    <h3 class="fw-bold mb-4 border-bottom pb-2">📋 All Bookings</h3>
+    @{
+        var bookings = ViewBag.Bookings as List<Booking> ?? new List<Booking>();
+    }
+    @if (!bookings.Any())// If there are no bookings available, display a friendly message and a call-to-action to create the first booking
+    {
+        <div class="text-center py-5 text-muted">
+            <h1>📋</h1>
+            <h5>No Current Bookings</h5>
+            <p class="small">No bookings have been made yet.</p>
+            <a asp-controller="Bookings" asp-action="Create" class="btn btn-sm btn-outline-success">+ New Booking</a>
+        </div>
+    }
+    else// If there are bookings available, display them in a list format with details and status badges
+    {
+        <ul class="list-group shadow-sm">
+            @foreach (var booking in bookings)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center mb-2" style="border-radius:8px;">
+                    <div>
+                        <h6 class="fw-bold mb-1">Booking #@booking.BookingID — @booking.CustomerName</h6>
+                        <p class="text-muted small mb-0">
+                            📅 @(booking.Event != null ? booking.Event.Name : "No Event") |
+                            🏛️ @(booking.Event?.Venue != null ? booking.Event.Venue.Name : "No Venue") |
+                            🗓️ @booking.CreatedAt.ToString("dd MMM yyyy") |
+                            <span class="badge"
+                                  style="background-color: @(booking.Status == "Pending" ? "#ffc107" : booking.Status == "Cancelled" ? "#dc3545" : "#28a745"); color: @(booking.Status == "Pending" ? "black" : "white");">
+                                @booking.Status
+                            </span>
+                        </p>
+                    </div>
+                    <a asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.BookingID"
+                       class="btn btn-sm"
+                       style="background-color:#e94560; color:white; border-radius:8px;">
+                        View
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+<!-- How It Works Section 
+    This section provides a simple, step-by-step guide on how to use the application. 
+    It uses icons and concise descriptions to make it easy for users to understand the booking process.
+-->
+<div class="mb-5 p-4 rounded" style="background: linear-gradient(135deg, #1a1a2e, #16213e); color:white;">
+    <h3 class="fw-bold mb-4 text-center">⚙️ How It Works</h3>
+    <div class="row text-center">
+        <div class="col-md-3 mb-3">
+            <div class="p-3">
+                <h1>1️⃣</h1>
+                <h6 class="fw-bold">Browse Venues</h6>
+                <p class="small text-white-50">Search available venues by location and capacity.</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="p-3">
+                <h1>2️⃣</h1>
+                <h6 class="fw-bold">Select an Event</h6>
+                <p class="small text-white-50">Choose or create an event to assign to a venue.</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="p-3">
+                <h1>3️⃣</h1>
+                <h6 class="fw-bold">Make a Booking</h6>
+                <p class="small text-white-50">Booking specialists confirm and log the booking.</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="p-3">
+                <h1>4️⃣</h1>
+                <h6 class="fw-bold">Manage and Track</h6>
+                <p class="small text-white-50">View, update, or cancel bookings at any time.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions Footer Bar 
+    This section provides quick access to key actions like adding a new venue, creating an event, or making a booking. 
+    It uses a card design with a call-to-action message and buttons for each action, encouraging users to engage with the application.
+-->
+<div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
+    <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h5 class="fw-bold mb-0">Ready to get started?</h5>
+            <p class="text-muted small mb-0">Manage all your venue bookings in one place.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-controller="Venues" asp-action="Create" class="btn btn-danger btn-sm">+ New Venue</a>
+            <a asp-controller="Events" asp-action="Create" class="btn btn-primary btn-sm">+ New Event</a>
+            <a asp-controller="Bookings" asp-action="Create" class="btn btn-success btn-sm">+ New Booking</a>
+        </div>
+    </div>
+</div>
+
+<!--
+    References:
+    - Microsoft Corporation (2022) Visual Studio IntelliSense [Software]. Version 17.8.
+      Available at: https://visualstudio.microsoft.com (Accessed: 22 March 2026).
+
+    - Microsoft Corporation (2022) ASP.NET Core Documentation [Online]. 
+      Available at: https://docs.microsoft.com/aspnet/core (Accessed: 22 March 2026).
+
+    - Anthropic (2026) Claude Sonnet 4.6 [AI assistant]. Available at: https://claude.ai (Accessed: 22 March 2026).
+      Prompt: "Generate a modern and user-friendly landing page for an ASP.NET Core MVC application called 'EventEase', which is a venue booking system. 
+      The page should include sections for featured venues, upcoming events, and recent bookings, with clear calls to action for users to explore the application. 
+      Use a clean design with a modern color scheme and responsive layout."
+-->
