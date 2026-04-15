@@ -64,8 +64,12 @@ namespace CLDV6211_POE_PART1.Controllers
             var events = _context.Events
                 .Select(e => new SelectListItem { Value = e.EventID.ToString(), Text = e.EventID + " (" + e.Name + ")" })
                 .ToList();
-            ViewData["EventID"] = new SelectList(events, "Value", "Text");
-            return View();
+            var model = new Models.ViewModels.BookingFormViewModel
+            {
+                EventSelectList = new SelectList(events, "Value", "Text")
+            };
+
+            return View(model);
         }
 
         /* POST: Bookings/Create
@@ -112,8 +116,19 @@ namespace CLDV6211_POE_PART1.Controllers
             var events = _context.Events
                 .Select(e => new SelectListItem { Value = e.EventID.ToString(), Text = e.EventID + " (" + e.Name + ")" })
                 .ToList();
-            ViewData["EventID"] = new SelectList(events, "Value", "Text", booking.EventID.ToString());
-            return View(booking);
+
+            var model = new Models.ViewModels.BookingFormViewModel
+            {
+                BookingID = booking.BookingID,
+                EventID = booking.EventID,
+                CustomerName = booking.CustomerName,
+                ContactInfo = booking.ContactInfo,
+                Status = booking.Status,
+                CreatedAt = booking.CreatedAt,
+                EventSelectList = new SelectList(events, "Value", "Text", booking.EventID.ToString())
+            };
+
+            return View(model);
         }
 
         /* POST: Bookings/Edit/5
@@ -125,38 +140,47 @@ namespace CLDV6211_POE_PART1.Controllers
          */
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BookingID,EventID,CustomerName,ContactInfo,Status,CreatedAt")] Booking booking)
+        public async Task<IActionResult> Edit(int id, Models.ViewModels.BookingFormViewModel model)
         {
-            if (id != booking.BookingID)//Checks if the provided ID does not match the BookingID of the booking being edited, and if so, returns a NotFound result, indicating that the requested resource cannot be found or accessed with the provided ID
+            if (id != model.BookingID)//Checks if the provided ID does not match the BookingID of the booking being edited
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try// Attempts to update the booking in the database context and save changes.
+                try
                 {
-                    _context.Update(booking);
+                    var existing = await _context.Bookings.FindAsync(id);
+                    if (existing == null) return NotFound();
+
+                    existing.EventID = model.EventID;
+                    existing.CustomerName = model.CustomerName;
+                    existing.ContactInfo = model.ContactInfo;
+                    existing.Status = model.Status;
+                    existing.CreatedAt = model.CreatedAt;
+
+                    _context.Update(existing);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)// Catches exceptions that occur when there is a concurrency conflict during the update operation, which can happen when multiple users attempt to edit the same booking at the same time
+                catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookingExists(booking.BookingID))
+                    if (!BookingExists(model.BookingID))
                     {
                         return NotFound();
                     }
                     else
                     {
-                        throw;// If the venue still exists but there is a concurrency conflict, it rethrows the exception to be handled by higher-level error handling mechanisms, allowing for appropriate error responses or logging
+                        throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));// After successfully updating the venue, it redirects the user to the Index action, which typically displays a list of all bookings, allowing the user to see the updated information in the context of the entire list
+                return RedirectToAction(nameof(Index));
             }
             var events = _context.Events
                 .Select(e => new SelectListItem { Value = e.EventID.ToString(), Text = e.EventID + " (" + e.Name + ")" })
                 .ToList();
-            ViewData["EventID"] = new SelectList(events, "Value", "Text", booking.EventID.ToString());
-            return View(booking);// If the model state is not valid, it repopulates the EventID dropdown list and returns the view with the current booking data, allowing the user to correct any validation errors and resubmit the form
+            model.EventSelectList = new SelectList(events, "Value", "Text", model.EventID.ToString());
+            return View(model);// If the model state is not valid, it repopulates the EventID dropdown list and returns the view with the current booking data, allowing the user to correct any validation errors and resubmit the form
         }
 
         /* GET: Bookings/Delete/5

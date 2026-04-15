@@ -1,47 +1,75 @@
-﻿@model CLDV6211_POE_PART1.Models.Event
+@model CLDV6211_POE_PART1.Models.ViewModels.EventFormViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Event — EventEase";
 }
 
-<h1>Edit</h1>
-
-<h4>Event</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="EventID" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
-                <span asp-validation-for="StartDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
-                <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VenueID" class="control-label"></label>
-                <select asp-for="VenueID" class="form-control" asp-items="ViewBag.VenueID"></select>
-                <span asp-validation-for="VenueID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+<!-- Page Header -->
+<div class="mb-4 pb-2 border-bottom">
+    <h2 class="fw-bold mb-0">✏️ Edit Event</h2>
+    <p class="text-muted small mb-0">Update the details for Event #@Model.EventID.</p>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow border-0" style="border-radius:12px; overflow:hidden;">
+            <!-- Card header banner -->
+            <div class="py-3 px-4"
+                 style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);">
+                <h5 class="text-white fw-bold mb-0">@Model.Name</h5>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
+                    <input type="hidden" asp-for="EventID" />
+
+                    <!-- Event Name -->
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold">📋 Event Name</label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter event name"
+                               style="border-radius:8px;" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Start Date -->
+                    <div class="mb-3">
+                        <label asp-for="StartDate" class="form-label fw-semibold">🗓️ Start Date</label>
+                        <input asp-for="StartDate" type="datetime-local" class="form-control" style="border-radius:8px;" />
+                        <span asp-validation-for="StartDate" class="text-danger small"></span>
+                    </div>
+
+                    <!-- End Date -->
+                    <div class="mb-3">
+                        <label asp-for="EndDate" class="form-label fw-semibold">🗓️ End Date</label>
+                        <input asp-for="EndDate" type="datetime-local" class="form-control" style="border-radius:8px;" />
+                        <span asp-validation-for="EndDate" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Venue -->
+                    <div class="mb-4">
+                        <label asp-for="VenueID" class="form-label fw-semibold">🏛️ Venue</label>
+                        <select asp-for="VenueID" class="form-select" asp-items="Model.VenueSelectList"
+                                style="border-radius:8px;">
+                        </select>
+                        <span asp-validation-for="VenueID" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-2">
+                        <input type="submit" value="Save Changes"
+                               class="btn px-4"
+                               style="background-color:#e94560; color:white; border-radius:8px;" />
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary"
+                           style="border-radius:8px;">
+                            ← Back to List
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

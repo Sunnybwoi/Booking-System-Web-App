@@ -1,42 +1,69 @@
-﻿@model CLDV6211_POE_PART1.Models.Event
+@model CLDV6211_POE_PART1.Models.Event
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Event Details — EventEase";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Event</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Venue)
-        </dt>
-        <dd class = "col-sm-10">
-            @((Model?.Venue != null) ? $"{Model.Venue.VenueID} ({Model.Venue.Name})" : "")
-        </dd>
-    </dl>
+<!-- Page Header -->
+<div class="mb-4 pb-2 border-bottom">
+    <h2 class="fw-bold mb-0">📅 Event Details</h2>
+    <p class="text-muted small mb-0">Full information for Event #@Model.EventID.</p>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.EventID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow border-0" style="border-radius:12px; overflow:hidden;">
+            <!-- Card header banner -->
+            <div class="py-3 px-4"
+                 style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="text-white fw-bold mb-0">@Model.Name</h5>
+                    <span class="badge" style="background-color:#e94560;">
+                        @(Model.StartDate > DateTime.Now ? "Upcoming" : "Ongoing")
+                    </span>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <!-- Event Name -->
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">📋 EVENT NAME</p>
+                    <p class="fw-bold mb-0">@Model.Name</p>
+                </div>
+
+                <!-- Start Date -->
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">🗓️ START DATE</p>
+                    <p class="fw-bold mb-0">@Model.StartDate.ToString("dd MMM yyyy, HH:mm")</p>
+                </div>
+
+                <!-- End Date -->
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">🗓️ END DATE</p>
+                    <p class="fw-bold mb-0">@Model.EndDate.ToString("dd MMM yyyy, HH:mm")</p>
+                </div>
+
+                <!-- Venue -->
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">🏛️ VENUE</p>
+                    <p class="fw-bold mb-0">
+                        @((Model?.Venue != null) ? $"{Model.Venue.VenueID} ({Model.Venue.Name})" : "No Venue Assigned")
+                    </p>
+                </div>
+            </div>
+
+            <div class="card-footer bg-white border-0 px-4 pb-4 d-flex gap-2">
+                <a asp-action="Edit" asp-route-id="@Model?.EventID"
+                   class="btn px-4"
+                   style="background-color:#0f3460; color:white; border-radius:8px;">
+                    ✏️ Edit
+                </a>
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary"
+                   style="border-radius:8px;">
+                    ← Back to List
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,51 +1,78 @@
-﻿@model CLDV6211_POE_PART1.Models.Booking
+@model CLDV6211_POE_PART1.Models.Booking
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Booking — EventEase";
 }
 
-<h1>Delete</h1>
+<!-- Page Header -->
+<div class="mb-4 pb-2 border-bottom">
+    <h2 class="fw-bold mb-0">🗑️ Delete Booking</h2>
+    <p class="text-muted small mb-0">Please review the details before confirming deletion.</p>
+</div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Booking</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Event)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Event.EventID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CustomerName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CustomerName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ContactInfo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ContactInfo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="BookingID" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+<div class="row justify-content-center">
+    <div class="col-md-7">
+
+        <!-- Warning Banner -->
+        <div class="alert d-flex align-items-center gap-2 mb-4"
+             style="background-color:#fff3f3; border-left:4px solid #dc3545; border-radius:8px;">
+            <span style="font-size:1.4rem;">⚠️</span>
+            <div>
+                <strong>Are you sure?</strong>
+                <p class="mb-0 small text-muted">This action cannot be undone. Booking #@Model.BookingID will be permanently removed.</p>
+            </div>
+        </div>
+
+        <div class="card shadow border-0" style="border-radius:12px; overflow:hidden;">
+            <!-- Card header banner -->
+            <div class="py-3 px-4"
+                 style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="text-white fw-bold mb-0">Booking #@Model.BookingID</h5>
+                    <span class="badge fs-6"
+                          style="background-color: @(Model.Status == "Pending" ? "#ffc107" : Model.Status == "Cancelled" ? "#dc3545" : "#28a745");
+                                 color: @(Model.Status == "Pending" ? "black" : "white");">
+                        @Model.Status
+                    </span>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <!-- Detail Rows -->
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">📅 EVENT</p>
+                    <p class="fw-bold mb-0">@Html.DisplayFor(model => model.Event.EventID)</p>
+                </div>
+
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">👤 CUSTOMER NAME</p>
+                    <p class="fw-bold mb-0">@Html.DisplayFor(model => model.CustomerName)</p>
+                </div>
+
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">📞 CONTACT INFO</p>
+                    <p class="fw-bold mb-0">@Html.DisplayFor(model => model.ContactInfo)</p>
+                </div>
+
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">🗓️ CREATED AT</p>
+                    <p class="fw-bold mb-0">@Model.CreatedAt.ToString("dd MMM yyyy, HH:mm")</p>
+                </div>
+            </div>
+
+            <div class="card-footer bg-white border-0 px-4 pb-4 d-flex gap-2">
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="BookingID" />
+                    <input type="submit" value="🗑️ Confirm Delete"
+                           class="btn btn-danger px-4"
+                           style="border-radius:8px;" />
+                </form>
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary"
+                   style="border-radius:8px;">
+                    ← Back to List
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

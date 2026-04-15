@@ -1,54 +1,84 @@
-﻿@model CLDV6211_POE_PART1.Models.Booking
+@model CLDV6211_POE_PART1.Models.ViewModels.BookingFormViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "New Booking — EventEase";
 }
 
-<h1>Create</h1>
-
-<h4>Booking</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="EventID" class="control-label"></label>
-                <select asp-for="EventID" class ="form-control" asp-items="ViewBag.EventID"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="CustomerName" class="control-label"></label>
-                <input asp-for="CustomerName" class="form-control" />
-                <span asp-validation-for="CustomerName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ContactInfo" class="control-label"></label>
-                <input asp-for="ContactInfo" class="form-control" />
-                <span asp-validation-for="ContactInfo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control">
-                    <option value="Pending">Pending</option>
-                    <option value="Booked">Booked</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+<!-- Page Header -->
+<div class="mb-4 pb-2 border-bottom">
+    <h2 class="fw-bold mb-0">📋 New Booking</h2>
+    <p class="text-muted small mb-0">Fill in the details below to create a new booking.</p>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow border-0" style="border-radius:12px; overflow:hidden;">
+            <!-- Card header banner -->
+            <div class="py-3 px-4"
+                 style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);">
+                <h5 class="text-white fw-bold mb-0">Booking Details</h5>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
+
+                    <!-- Event -->
+                    <div class="mb-3">
+                        <label asp-for="EventID" class="form-label fw-semibold">📅 Event</label>
+                        <select asp-for="EventID" class="form-select" asp-items="Model.EventSelectList"
+                                style="border-radius:8px;">
+                        </select>
+                    </div>
+
+                    <!-- Customer Name -->
+                    <div class="mb-3">
+                        <label asp-for="CustomerName" class="form-label fw-semibold">👤 Customer Name</label>
+                        <input asp-for="CustomerName" class="form-control" placeholder="Enter customer name"
+                               style="border-radius:8px;" />
+                        <span asp-validation-for="CustomerName" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="mb-3">
+                        <label asp-for="ContactInfo" class="form-label fw-semibold">📞 Contact Info</label>
+                        <input asp-for="ContactInfo" class="form-control" placeholder="Email or phone number"
+                               style="border-radius:8px;" />
+                        <span asp-validation-for="ContactInfo" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="mb-3">
+                        <label asp-for="Status" class="form-label fw-semibold">🏷️ Status</label>
+                        <select asp-for="Status" class="form-select" style="border-radius:8px;">
+                            <option value="Pending">Pending</option>
+                            <option value="Booked">Booked</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Created At -->
+                    <div class="mb-4">
+                        <label asp-for="CreatedAt" class="form-label fw-semibold">🗓️ Date</label>
+                        <input asp-for="CreatedAt" class="form-control" style="border-radius:8px;" />
+                        <span asp-validation-for="CreatedAt" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-2">
+                        <input type="submit" value="Create Booking"
+                               class="btn px-4"
+                               style="background-color:#e94560; color:white; border-radius:8px;" />
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary"
+                           style="border-radius:8px;">
+                            ← Back to List
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

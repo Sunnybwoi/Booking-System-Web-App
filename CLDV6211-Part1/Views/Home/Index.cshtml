@@ -1,4 +1,5 @@
-﻿@using CLDV6211_POE_PART1
+﻿@model CLDV6211_POE_PART1.Models.ViewModels.HomeIndexViewModel
+@using CLDV6211_POE_PART1
 @using CLDV6211_POE_PART1.Models
 <!--
     Home/Index.cshtml - The main landing page for the EventEase application. 
@@ -8,9 +9,9 @@
     using Microsoft Visual Studio IntelliSense for code completion and best practices in ASP.NET Core MVC development.
 -->
 @{
-    ViewData["Title"] = "EventEase - Venue Booking System";// Set the page title for SEO and browser display
-    var venues = ViewBag.Venues as List<Venue> ?? new List<Venue>();// Retrieve the list of venues from the ViewBag, or initialize an empty list if it's null
-    var events = ViewBag.Events as List<Event> ?? new List<Event>();// Retrieve the list of events from the ViewBag, or initialize an empty list if it's null
+    ViewData["Title"] = "EventEase - Venue Booking System"; // Set the page title for SEO and browser display
+    var venues = Model.Venues ?? new List<Venue>();
+    var events = Model.Events ?? new List<Event>();
 }
 
 <!-- Hero Section 
@@ -139,7 +140,7 @@
     This section showcases upcoming events with images, names, venues, and dates.
 -->
 <div class="mb-5">
-    <h3 class="fw-bold mb-4 border-bottom pb-2">📅 Upcoming Events</h3>
+    <h3 class="fw-bold mb-4 border-bottom pb-2">📅 Events</h3>
     @if (!events.Any())// If there are no events available, display a friendly message and a call-to-action to add the first event
     {
         <div class="text-center py-5 text-muted">
@@ -188,7 +189,7 @@
 <div class="mb-5">
     <h3 class="fw-bold mb-4 border-bottom pb-2">📋 All Bookings</h3>
     @{
-        var bookings = ViewBag.Bookings as List<Booking> ?? new List<Booking>();
+        var bookings = Model.Bookings ?? new List<Booking>();
     }
     @if (!bookings.Any())// If there are no bookings available, display a friendly message and a call-to-action to create the first booking
     {

@@ -1,48 +1,68 @@
-﻿@model CLDV6211_POE_PART1.Models.Booking
+@model CLDV6211_POE_PART1.Models.Booking
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Booking Details — EventEase";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Booking</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Event)
-        </dt>
-        <dd class = "col-sm-10">
-            @((Model?.Event != null) ? $"{Model.Event.EventID} ({Model.Event.Name})" : "")
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CustomerName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CustomerName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ContactInfo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ContactInfo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-    </dl>
+<!-- Page Header -->
+<div class="mb-4 pb-2 border-bottom">
+    <h2 class="fw-bold mb-0">📋 Booking Details</h2>
+    <p class="text-muted small mb-0">Full information for Booking #@Model.BookingID.</p>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.BookingID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow border-0" style="border-radius:12px; overflow:hidden;">
+            <!-- Card header banner -->
+            <div class="py-3 px-4"
+                 style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="text-white fw-bold mb-0">Booking #@Model.BookingID</h5>
+                    <span class="badge fs-6"
+                          style="background-color: @(Model.Status == "Pending" ? "#ffc107" : Model.Status == "Cancelled" ? "#dc3545" : "#28a745");
+                                 color: @(Model.Status == "Pending" ? "black" : "white");">
+                        @Model.Status
+                    </span>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <!-- Detail Rows -->
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">📅 EVENT</p>
+                    <p class="fw-bold mb-0">
+                        @((Model?.Event != null) ? $"{Model.Event.EventID} ({Model.Event.Name})" : "No Event Assigned")
+                    </p>
+                </div>
+
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">👤 CUSTOMER NAME</p>
+                    <p class="fw-bold mb-0">@Model.CustomerName</p>
+                </div>
+
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">📞 CONTACT INFO</p>
+                    <p class="fw-bold mb-0">@Model.ContactInfo</p>
+                </div>
+
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">🗓️ CREATED AT</p>
+                    <p class="fw-bold mb-0">@Model.CreatedAt.ToString("dd MMM yyyy, HH:mm")</p>
+                </div>
+            </div>
+
+            <div class="card-footer bg-white border-0 px-4 pb-4 d-flex gap-2">
+                <a asp-action="Edit" asp-route-id="@Model?.BookingID"
+                   class="btn px-4"
+                   style="background-color:#0f3460; color:white; border-radius:8px;">
+                    ✏️ Edit
+                </a>
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary"
+                   style="border-radius:8px;">
+                    ← Back to List
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

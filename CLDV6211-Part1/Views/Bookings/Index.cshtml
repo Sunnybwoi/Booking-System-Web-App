@@ -1,59 +1,71 @@
-﻿@model IEnumerable<CLDV6211_POE_PART1.Models.Booking>
+@model IEnumerable<CLDV6211_POE_PART1.Models.Booking>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Bookings — EventEase";
 }
 
-<h1>Index</h1>
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+    <div>
+        <h2 class="fw-bold mb-0">📋 Booking Management</h2>
+        <p class="text-muted small mb-0">View and manage all bookings in the system.</p>
+    </div>
+    <a asp-action="Create"
+       class="btn btn-sm px-4"
+       style="background-color:#e94560; color:white; border-radius:8px;">
+        + New Booking
+    </a>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Event)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CustomerName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContactInfo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Event.EventID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CustomerName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContactInfo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.BookingID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.BookingID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BookingID">Delete</a>
-            </td>
-        </tr>
+@if (!Model.Any())
+{
+    <!-- Empty State -->
+    <div class="text-center py-5 text-muted">
+        <h1>📋</h1>
+        <h5>No Bookings Yet</h5>
+        <p class="small">No bookings have been made yet.</p>
+        <a asp-action="Create" class="btn btn-sm btn-outline-success">+ New Booking</a>
+    </div>
 }
-    </tbody>
-</table>
+else
+{
+    <ul class="list-group shadow-sm">
+        @foreach (var item in Model)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center mb-2" style="border-radius:8px;">
+                <div>
+                    <h6 class="fw-bold mb-1">
+                        Booking #@item.BookingID — @item.CustomerName
+                    </h6>
+                    <p class="text-muted small mb-0">
+                        📅 @(item.Event != null ? item.Event.Name : "No Event") |
+                        📞 @item.ContactInfo |
+                        🗓️ @item.CreatedAt.ToString("dd MMM yyyy") |
+                        <span class="badge"
+                              style="background-color: @(item.Status == "Pending" ? "#ffc107" : item.Status == "Cancelled" ? "#dc3545" : "#28a745");
+                                     color: @(item.Status == "Pending" ? "black" : "white");">
+                            @item.Status
+                        </span>
+                    </p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-action="Details" asp-route-id="@item.BookingID"
+                       class="btn btn-sm"
+                       style="background-color:#e94560; color:white; border-radius:8px;">
+                        View
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@item.BookingID"
+                       class="btn btn-sm btn-outline-secondary"
+                       style="border-radius:8px;">
+                        Edit
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.BookingID"
+                       class="btn btn-sm btn-outline-danger"
+                       style="border-radius:8px;">
+                        Delete
+                    </a>
+                </div>
+            </li>
+        }
+    </ul>
+}

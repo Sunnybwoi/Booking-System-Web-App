@@ -63,8 +63,15 @@ namespace CLDV6211_POE_PART1.Controllers
             var venues = _context.Venues
                 .Select(v => new SelectListItem { Value = v.VenueID.ToString(), Text = v.VenueID + " (" + v.Name + ")" })
                 .ToList();
-            ViewData["VenueID"] = new SelectList(venues, "Value", "Text");
-            return View();
+
+            var model = new Models.ViewModels.EventFormViewModel
+            {
+                StartDate = DateTime.Now, 
+                EndDate = DateTime.Now,  
+                VenueSelectList = new SelectList(venues, "Value", "Text")
+            };
+
+            return View(model);
         }
 
         /* POST: Events/Create
@@ -74,12 +81,20 @@ namespace CLDV6211_POE_PART1.Controllers
          * Code completion assisted by Visual Studio IntelliSense
          * (Microsoft Corporation, 2022). Version 17.8. */
 
-        [HttpPost]// Specifies that this action method should only handle HTTP POST requests, which is appropriate for form submissions that create new resources
-        [ValidateAntiForgeryToken]// Validates the anti-forgery token to prevent CSRF attacks when handling the form submission for creating a new event
-        public async Task<IActionResult> Create([Bind("Name,StartDate,EndDate,VenueID")] Event @event)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Models.ViewModels.EventFormViewModel model)
         {
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
+                var @event = new Event
+                {
+                    Name = model.Name,
+                    StartDate = model.StartDate,
+                    EndDate = model.EndDate,
+                    VenueID = model.VenueID
+                };
+
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Event created successfully!";
@@ -93,8 +108,8 @@ namespace CLDV6211_POE_PART1.Controllers
             var venues = _context.Venues
                 .Select(v => new SelectListItem { Value = v.VenueID.ToString(), Text = v.VenueID + " (" + v.Name + ")" })
                 .ToList();
-            ViewData["VenueID"] = new SelectList(venues, "Value", "Text", @event.VenueID.ToString());
-            return View(@event);
+            model.VenueSelectList = new SelectList(venues, "Value", "Text", model.VenueID.ToString());
+            return View(model);
         }
 
         /* GET: Events/Edit/5
@@ -110,17 +125,26 @@ namespace CLDV6211_POE_PART1.Controllers
             }
              
             var @event = await _context.Events.FindAsync(id); // Retrieves the event from the database context based on the provided ID
-            if (@event == null) 
+            if (@event == null)
             {
                 return NotFound();
             }
 
-            // Prepares the view for editing by populating a dropdown list of venues, setting the selected value to the current venue of the event, and returns the view with the event data
             var venues = (await _context.Venues.ToListAsync())
                 .Select(v => new SelectListItem { Value = v.VenueID.ToString(), Text = v.VenueID + " (" + v.Name + ")" })
                 .ToList();
-            ViewData["VenueID"] = new SelectList(venues, "Value", "Text", @event.VenueID.ToString()); 
-            return View(@event);
+
+            var model = new Models.ViewModels.EventFormViewModel
+            {
+                EventID = @event.EventID,
+                Name = @event.Name,
+                StartDate = @event.StartDate,
+                EndDate = @event.EndDate,
+                VenueID = @event.VenueID,
+                VenueSelectList = new SelectList(venues, "Value", "Text", @event.VenueID.ToString())
+            };
+
+            return View(model);
         }
 
         /* POST: Events/Edit/5
@@ -130,40 +154,47 @@ namespace CLDV6211_POE_PART1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EventID,Name,StartDate,EndDate,VenueID")] Event @event)
+        public async Task<IActionResult> Edit(int id, Models.ViewModels.EventFormViewModel model)
         {
-            if (id != @event.EventID) // Checks if the provided ID does not match the EventID of the event being edited and returns a NotFound result if they do not match, ensuring that the correct event is being edited
+            if (id != model.EventID) // Checks if the provided ID does not match the EventID of the event being edited and returns a NotFound result if they do not match
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try // Attempts to update the event in the database context and save changes, handling potential concurrency issues
+                try
                 {
-                    _context.Update(@event);
+                    var existing = await _context.Events.FindAsync(id);
+                    if (existing == null) return NotFound();
+
+                    existing.Name = model.Name;
+                    existing.StartDate = model.StartDate;
+                    existing.EndDate = model.EndDate;
+                    existing.VenueID = model.VenueID;
+
+                    _context.Update(existing);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)// Handles concurrency issues when multiple users attempt to edit the same event simultaneously
+                catch (DbUpdateConcurrencyException)
                 {
-                    if (!EventExists(@event.EventID))
+                    if (!EventExists(model.EventID))
                     {
                         return NotFound();
                     }
                     else
                     {
-                        throw; // Rethrows the exception if the event still exists, allowing higher-level error handling to manage it
+                        throw;
                     }
                 }
-                return RedirectToAction(nameof(Index)); // Redirects the user to the Index action after successfully editing the event, allowing them to see the updated list of events
+                return RedirectToAction(nameof(Index));
             }
 
             var venues = (await _context.Venues.ToListAsync())
                 .Select(v => new SelectListItem { Value = v.VenueID.ToString(), Text = v.VenueID + " (" + v.Name + ")" })
                 .ToList();
-            ViewData["VenueID"] = new SelectList(venues, "Value", "Text", @event.VenueID.ToString()); // Prepares the view for editing again by repopulating the dropdown list of venues and setting the selected value to the current venue of the event,
-                                                                                                                          // in case the model state is invalid and the user needs to correct errors before resubmitting  
-            return View(@event);
+            model.VenueSelectList = new SelectList(venues, "Value", "Text", model.VenueID.ToString());
+            return View(model);
         }
 
         /* GET: Events/Delete/5

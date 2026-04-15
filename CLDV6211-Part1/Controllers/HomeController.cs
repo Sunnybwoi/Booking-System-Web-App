@@ -1,5 +1,6 @@
 using CLDV6211_POE_PART1.Data;
 using CLDV6211_POE_PART1.Models;
+using CLDV6211_POE_PART1.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -20,10 +21,14 @@ namespace CLDV6211_POE_PART1.Controllers
         // It uses asynchronous programming to ensure that the application remains responsive while fetching data.
         public async Task<IActionResult> Index()
         {
-            ViewBag.Venues = await _context.Venues.ToListAsync();
-            ViewBag.Events = await _context.Events.Include(e => e.Venue).ToListAsync();
-            ViewBag.Bookings = await _context.Bookings.Include(b => b.Event).ThenInclude(e => e.Venue).ToListAsync();
-            return View();
+            var model = new HomeIndexViewModel
+            {
+                Venues = await _context.Venues.ToListAsync(),
+                Events = await _context.Events.Include(e => e.Venue).ToListAsync(),
+                Bookings = await _context.Bookings.Include(b => b.Event).ThenInclude(e => e.Venue).ToListAsync()
+            };
+
+            return View(model);
         }
 
         public IActionResult Privacy()

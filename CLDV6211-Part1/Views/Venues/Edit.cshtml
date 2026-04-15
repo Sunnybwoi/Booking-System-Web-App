@@ -1,52 +1,57 @@
-﻿@model CLDV6211_POE_PART1.Models.Venue
+@model CLDV6211_POE_PART1.Models.Venue
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Venue — EventEase";
 }
 
-<h1>Edit</h1>
-
-<h4>Venue</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="VenueID" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Location" class="control-label"></label>
-                <input asp-for="Location" class="form-control" />
-                <span asp-validation-for="Location" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Capacity" class="control-label"></label>
-                <input asp-for="Capacity" class="form-control" />
-                <span asp-validation-for="Capacity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageURL" class="control-label"></label>
-                <input asp-for="ImageURL" class="form-control" />
-                <span asp-validation-for="ImageURL" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+<div class="mb-4 pb-2 border-bottom">
+    <h2 class="fw-bold mb-0">✏️ Edit Venue</h2>
+    <p class="text-muted small mb-0">Update details for Venue #@Model.VenueID.</p>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow border-0" style="border-radius:12px; overflow:hidden;">
+            <div class="py-3 px-4" style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);">
+                <h5 class="text-white fw-bold mb-0">@Model.Name</h5>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
+                    <input type="hidden" asp-for="VenueID" />
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold">Name</label>
+                        <input asp-for="Name" class="form-control" style="border-radius:8px;" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Location" class="form-label fw-semibold">Location</label>
+                        <input asp-for="Location" class="form-control" style="border-radius:8px;" />
+                        <span asp-validation-for="Location" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Capacity" class="form-label fw-semibold">Capacity</label>
+                        <input asp-for="Capacity" class="form-control" style="border-radius:8px;" />
+                        <span asp-validation-for="Capacity" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ImageURL" class="form-label fw-semibold">Image URL</label>
+                        <input asp-for="ImageURL" class="form-control" style="border-radius:8px;" />
+                        <span asp-validation-for="ImageURL" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <input type="submit" value="Save Changes" class="btn px-4" style="background-color:#e94560; color:white; border-radius:8px;" />
+                        <a asp-action="Index" class="btn btn-outline-secondary" style="border-radius:8px;">← Back to List</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

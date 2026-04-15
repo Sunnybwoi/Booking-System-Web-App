@@ -1,6 +1,185 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Privacy Policy — EventEase";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<!-- Page Header -->
+<div class="mb-4 pb-2 border-bottom">
+    <h2 class="fw-bold mb-0">🔒 Privacy Policy</h2>
+    <p class="text-muted small mb-0">Last updated: @DateTime.Now.ToString("dd MMMM yyyy")</p>
+</div>
+
+<!-- Intro Banner -->
+<div class="py-4 px-4 mb-4 text-white"
+     style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%); border-radius:12px;">
+    <h5 class="fw-bold mb-1">EventEase Venue Booking System</h5>
+    <p class="mb-0 small" style="color:rgba(255,255,255,0.75);">
+        This privacy policy explains how EventEase collects, uses, and protects information
+        entered into this system. EventEase is an academic project developed for the
+        CLDV6211 Portfolio of Evidence and is intended for internal and educational use only.
+    </p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-9">
+
+        <!-- Section 1 -->
+        <div class="card shadow-sm border-0 mb-3" style="border-radius:12px; overflow:hidden;">
+            <div class="py-2 px-4" style="background-color:#e94560;">
+                <h6 class="text-white fw-bold mb-0">1. Information We Collect</h6>
+            </div>
+            <div class="card-body px-4 py-3">
+                <p class="mb-2 small text-muted">The following information is collected when using EventEase:</p>
+
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="fw-semibold small mb-1">📋 Booking Information</p>
+                    <p class="small text-muted mb-0">
+                        Customer name, contact details (email address or phone number), booking status,
+                        and the date and time a booking was created.
+                    </p>
+                </div>
+
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="fw-semibold small mb-1">🏛️ Venue Information</p>
+                    <p class="small text-muted mb-0">
+                        Venue names, physical locations, capacity figures, image URLs, and the date
+                        a venue record was added to the system.
+                    </p>
+                </div>
+
+                <div class="p-3 rounded" style="background:#f8f9fa;">
+                    <p class="fw-semibold small mb-1">📅 Event Information</p>
+                    <p class="small text-muted mb-0">
+                        Event names, start and end dates, and the venue associated with each event.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="card shadow-sm border-0 mb-3" style="border-radius:12px; overflow:hidden;">
+            <div class="py-2 px-4" style="background-color:#0f3460;">
+                <h6 class="text-white fw-bold mb-0">2. How We Use Your Information</h6>
+            </div>
+            <div class="card-body px-4 py-3">
+                <p class="small text-muted mb-3">Information entered into EventEase is used solely for the following purposes:</p>
+                <div class="p-3 rounded" style="background:#f8f9fa;">
+                    <ul class="small text-muted mb-0" style="padding-left:1.2rem;">
+                        <li class="mb-2">To create, manage, and track venue bookings and their statuses (Pending, Booked, Cancelled).</li>
+                        <li class="mb-2">To schedule and organise events at specific venues.</li>
+                        <li class="mb-2">To prevent scheduling conflicts and double bookings.</li>
+                        <li class="mb-2">To allow administrators to view and manage all records within the system.</li>
+                        <li>To support the academic demonstration of an ASP.NET Core MVC web application.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="card shadow-sm border-0 mb-3" style="border-radius:12px; overflow:hidden;">
+            <div class="py-2 px-4" style="background-color:#0f3460;">
+                <h6 class="text-white fw-bold mb-0">3. What We Do Not Do</h6>
+            </div>
+            <div class="card-body px-4 py-3">
+                <p class="small text-muted mb-3">EventEase does <strong>not</strong>:</p>
+                <div class="p-3 rounded" style="background:#f8f9fa;">
+                    <ul class="small text-muted mb-0" style="padding-left:1.2rem;">
+                        <li class="mb-2">Collect or store user account credentials, passwords, or authentication tokens.</li>
+                        <li class="mb-2">Process or store any payment or financial information.</li>
+                        <li class="mb-2">Share, sell, or disclose personal information to any third parties.</li>
+                        <li class="mb-2">Use personal information for marketing or advertising purposes.</li>
+                        <li>Track users across sessions using cookies beyond the default ASP.NET Core antiforgery and session tokens required for secure form submission.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4 -->
+        <div class="card shadow-sm border-0 mb-3" style="border-radius:12px; overflow:hidden;">
+            <div class="py-2 px-4" style="background-color:#0f3460;">
+                <h6 class="text-white fw-bold mb-0">4. Data Storage & Security</h6>
+            </div>
+            <div class="card-body px-4 py-3">
+                <div class="p-3 rounded" style="background:#f8f9fa;">
+                    <p class="small text-muted mb-2">
+                        All data entered into EventEase is stored in a relational database managed
+                        by the system administrator. The application is hosted in a controlled
+                        academic environment and is not publicly accessible on the internet.
+                    </p>
+                    <p class="small text-muted mb-0">
+                        While reasonable precautions are taken to protect stored information,
+                        EventEase is an academic prototype and should not be used to store
+                        sensitive personal information beyond what is required for demonstration purposes.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5 -->
+        <div class="card shadow-sm border-0 mb-3" style="border-radius:12px; overflow:hidden;">
+            <div class="py-2 px-4" style="background-color:#0f3460;">
+                <h6 class="text-white fw-bold mb-0">5. Data Retention</h6>
+            </div>
+            <div class="card-body px-4 py-3">
+                <div class="p-3 rounded" style="background:#f8f9fa;">
+                    <p class="small text-muted mb-2">
+                        Booking, event, and venue records are retained in the system until they are
+                        manually deleted by an administrator using the Delete function within the application.
+                    </p>
+                    <p class="small text-muted mb-0">
+                        If you would like any information removed from the system, please contact
+                        the system administrator directly using the details provided in Section 7 below.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6 -->
+        <div class="card shadow-sm border-0 mb-3" style="border-radius:12px; overflow:hidden;">
+            <div class="py-2 px-4" style="background-color:#0f3460;">
+                <h6 class="text-white fw-bold mb-0">6. Your Rights</h6>
+            </div>
+            <div class="card-body px-4 py-3">
+                <p class="small text-muted mb-3">As a user of this system, you have the right to:</p>
+                <div class="p-3 rounded" style="background:#f8f9fa;">
+                    <ul class="small text-muted mb-0" style="padding-left:1.2rem;">
+                        <li class="mb-2"><strong>Access</strong> — request to view what personal information is held about you.</li>
+                        <li class="mb-2"><strong>Correction</strong> — request that inaccurate information be updated via the Edit function.</li>
+                        <li class="mb-2"><strong>Deletion</strong> — request the removal of your personal data from the system.</li>
+                        <li><strong>Objection</strong> — object to the use of your information for any purpose beyond booking management.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 7 - Contact -->
+        <div class="card shadow-sm border-0 mb-4" style="border-radius:12px; overflow:hidden;">
+            <div class="py-2 px-4" style="background-color:#e94560;">
+                <h6 class="text-white fw-bold mb-0">7. Contact</h6>
+            </div>
+            <div class="card-body px-4 py-3">
+                <div class="p-3 rounded" style="background:#f8f9fa;">
+                    <p class="small text-muted mb-2">
+                        EventEase is an academic project submitted in partial fulfilment of the
+                        requirements for <strong>CLDV6211</strong> at <strong>The IIE Institution, Emeris</strong>.
+                        For any privacy-related queries or data removal requests, please contact
+                        the developer or your lecturer directly.
+                    </p>
+                    <p class="small text-muted mb-0">
+                        This policy applies only to this application and does not extend to any
+                        external platforms, services, or institutions.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back to Home -->
+        <div class="text-center mb-4">
+            <a asp-controller="Home" asp-action="Index"
+               class="btn px-4"
+               style="background-color:#e94560; color:white; border-radius:8px;">
+                ← Back to Home
+            </a>
+        </div>
+
+    </div>
+</div>

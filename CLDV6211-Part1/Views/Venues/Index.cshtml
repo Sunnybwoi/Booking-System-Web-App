@@ -1,59 +1,52 @@
-﻿@model IEnumerable<CLDV6211_POE_PART1.Models.Venue>
+@model IEnumerable<CLDV6211_POE_PART1.Models.Venue>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Venues — EventEase";
 }
 
-<h1>Index</h1>
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+    <div>
+        <h2 class="fw-bold mb-0">🏛️ Venue Management</h2>
+        <p class="text-muted small mb-0">Browse and manage all venues.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-sm px-4" style="background-color:#e94560; color:white; border-radius:8px;">+ New Venue</a>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Location)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Capacity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageURL)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Location)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Capacity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageURL)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.VenueID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.VenueID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.VenueID">Delete</a>
-            </td>
-        </tr>
+@if (!Model.Any())
+{
+    <div class="text-center py-5 text-muted">
+        <h1>🏛️</h1>
+        <h5>No Venues Found</h5>
+        <p class="small">Add your first venue to get started.</p>
+        <a asp-action="Create" class="btn btn-sm btn-outline-danger">+ Add Venue</a>
+    </div>
 }
-    </tbody>
-</table>
+else
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow border-0 h-100" style="border-radius:12px; overflow:hidden;">
+                    @if (!string.IsNullOrEmpty(item.ImageURL))
+                    {
+                        <img src="@item.ImageURL" class="card-img-top" alt="@item.Name" style="height:180px; object-fit:cover;" onerror="this.src='https://placehold.co/600x300/0f3460/white?text=No+Image'" />
+                    }
+                    else
+                    {
+                        <img src="https://placehold.co/600x300/0f3460/white?text=No+Image" class="card-img-top" alt="@item.Name" style="height:180px; object-fit:cover;" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">@item.Name</h5>
+                        <p class="text-muted small">📍 @item.Location | 👥 Capacity: @item.Capacity</p>
+                    </div>
+                    <div class="card-footer bg-white border-0 d-flex gap-2">
+                        <a asp-action="Details" asp-route-id="@item.VenueID" class="btn btn-sm flex-fill" style="background-color:#e94560; color:white; border-radius:8px;">View</a>
+                        <a asp-action="Edit" asp-route-id="@item.VenueID" class="btn btn-sm btn-outline-secondary flex-fill" style="border-radius:8px;">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.VenueID" class="btn btn-sm btn-outline-danger flex-fill" style="border-radius:8px;">Delete</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

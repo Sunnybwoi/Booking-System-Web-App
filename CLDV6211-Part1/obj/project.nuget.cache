@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "efal+H8MwUs=",
+  "dgSpecHash": "2zsyTi7M+5w=",
   "success": true,
-  "projectFilePath": "C:\\Users\\sunga\\source\\repos\\CLDV6211-Part1\\CLDV6211-Part1\\CLDV6211-POE-PART1.csproj",
+  "projectFilePath": "C:\\Users\\sunga\\OneDrive\\Documents\\GitHub\\cldv6211-g4-2026-part1-ST10472846-1\\CLDV6211-Part1\\CLDV6211-POE-PART1.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\sunga\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\sunga\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",

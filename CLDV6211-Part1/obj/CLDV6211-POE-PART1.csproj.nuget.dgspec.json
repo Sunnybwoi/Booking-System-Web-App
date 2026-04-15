@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sunga\\source\\repos\\CLDV6211-Part1\\CLDV6211-Part1\\CLDV6211-POE-PART1.csproj": {}
+    "C:\\Users\\sunga\\OneDrive\\Documents\\GitHub\\cldv6211-g4-2026-part1-ST10472846-1\\CLDV6211-Part1\\CLDV6211-POE-PART1.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sunga\\source\\repos\\CLDV6211-Part1\\CLDV6211-Part1\\CLDV6211-POE-PART1.csproj": {
+    "C:\\Users\\sunga\\OneDrive\\Documents\\GitHub\\cldv6211-g4-2026-part1-ST10472846-1\\CLDV6211-Part1\\CLDV6211-POE-PART1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sunga\\source\\repos\\CLDV6211-Part1\\CLDV6211-Part1\\CLDV6211-POE-PART1.csproj",
+        "projectUniqueName": "C:\\Users\\sunga\\OneDrive\\Documents\\GitHub\\cldv6211-g4-2026-part1-ST10472846-1\\CLDV6211-Part1\\CLDV6211-POE-PART1.csproj",
         "projectName": "CLDV6211-POE-PART1",
-        "projectPath": "C:\\Users\\sunga\\source\\repos\\CLDV6211-Part1\\CLDV6211-Part1\\CLDV6211-POE-PART1.csproj",
+        "projectPath": "C:\\Users\\sunga\\OneDrive\\Documents\\GitHub\\cldv6211-g4-2026-part1-ST10472846-1\\CLDV6211-Part1\\CLDV6211-POE-PART1.csproj",
         "packagesPath": "C:\\Users\\sunga\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sunga\\source\\repos\\CLDV6211-Part1\\CLDV6211-Part1\\obj\\",
+        "outputPath": "C:\\Users\\sunga\\OneDrive\\Documents\\GitHub\\cldv6211-g4-2026-part1-ST10472846-1\\CLDV6211-Part1\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

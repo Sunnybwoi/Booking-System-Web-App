@@ -1,48 +1,72 @@
-﻿@model CLDV6211_POE_PART1.Models.Venue
+@model CLDV6211_POE_PART1.Models.Venue
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Venue Details — EventEase";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Venue</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Location)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Location)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Capacity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Capacity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageURL)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageURL)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-    </dl>
+<!-- Page Header -->
+<div class="mb-4 pb-2 border-bottom">
+    <h2 class="fw-bold mb-0">🏛️ Venue Details</h2>
+    <p class="text-muted small mb-0">Full information for Venue #@Model.VenueID.</p>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.VenueID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow border-0" style="border-radius:12px; overflow:hidden;">
+            <!-- Card header banner -->
+            <div class="py-3 px-4"
+                 style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="text-white fw-bold mb-0">@Model.Name</h5>
+                    <span class="badge" style="background-color:#e94560;">ID: @Model.VenueID</span>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <!-- Image -->
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">🖼️ IMAGE</p>
+                    @if (!string.IsNullOrEmpty(Model.ImageURL))
+                    {
+                        <img src="@Model.ImageURL" alt="@Model.Name" class="img-fluid rounded" style="max-height:240px; object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <img src="https://placehold.co/600x300/0f3460/white?text=No+Image" alt="@Model.Name" class="img-fluid rounded" />
+                    }
+                </div>
+
+                <!-- Location -->
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">📍 LOCATION</p>
+                    <p class="fw-bold mb-0">@Model.Location</p>
+                </div>
+
+                <!-- Capacity -->
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">👥 CAPACITY</p>
+                    <p class="fw-bold mb-0">@Model.Capacity</p>
+                </div>
+
+                <!-- Created At -->
+                <div class="mb-3 p-3 rounded" style="background:#f8f9fa;">
+                    <p class="text-muted small fw-semibold mb-1">🗓️ ADDED</p>
+                    <p class="fw-bold mb-0">@Model.CreatedAt.ToString("dd MMM yyyy")</p>
+                </div>
+            </div>
+
+            <div class="card-footer bg-white border-0 px-4 pb-4 d-flex gap-2">
+                <a asp-action="Edit" asp-route-id="@Model?.VenueID"
+                   class="btn px-4"
+                   style="background-color:#0f3460; color:white; border-radius:8px;">
+                    ✏️ Edit
+                </a>
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary"
+                   style="border-radius:8px;">
+                    ← Back to List
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
