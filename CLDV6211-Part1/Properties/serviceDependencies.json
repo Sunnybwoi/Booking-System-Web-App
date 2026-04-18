@@ -3,6 +3,14 @@
     "mssql1": {
       "type": "mssql",
       "connectionId": "ConnectionStrings:CLDV6211_Part1Context"
+    },
+    "storage1": {
+      "type": "storage",
+      "connectionId": "AzuriteStorage"
+    },
+    "secrets1": {
+      "type": "secrets",
+      "connectionId": null
     }
   }
 }

@@ -9,6 +9,15 @@
     <p class="text-muted small mb-0">Update details for Venue #@Model.VenueID.</p>
 </div>
 
+@* Part 2 — Success/Error alert banners *@
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show small" role="alert">
+        ⚠️ @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="row justify-content-center">
     <div class="col-md-7">
         <div class="card shadow border-0" style="border-radius:12px; overflow:hidden;">
@@ -16,9 +25,12 @@
                 <h5 class="text-white fw-bold mb-0">@Model.Name</h5>
             </div>
             <div class="card-body p-4">
-                <form asp-action="Edit" method="post">
+                @* Part 2 — enctype="multipart/form-data" required for file upload *@
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
                     <input type="hidden" asp-for="VenueID" />
+                    @* Part 2 — Preserve the existing blob URL so the controller knows to keep it if no new file is chosen *@
+                    <input type="hidden" asp-for="ImageURL" />
 
                     <div class="mb-3">
                         <label asp-for="Name" class="form-label fw-semibold">Name</label>
@@ -38,10 +50,33 @@
                         <span asp-validation-for="Capacity" class="text-danger small"></span>
                     </div>
 
+                    @* Part 2 — Show the current blob image if one exists, before the upload control *@
+                    @if (!string.IsNullOrEmpty(Model.ImageURL))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">🖼️ Current Image</label><br />
+                            <img src="@Model.ImageURL" alt="Current venue image"
+                                 style="max-width:200px; max-height:150px; object-fit:cover; border-radius:8px; border:1px solid #dee2e6;" />
+                        </div>
+                    }
+
+                    @* Part 2 — File upload replaces the plain ImageURL text input.
+                       Leaving this field empty keeps the existing blob image unchanged. *@
                     <div class="mb-3">
-                        <label asp-for="ImageURL" class="form-label fw-semibold">Image URL</label>
-                        <input asp-for="ImageURL" class="form-control" style="border-radius:8px;" />
+                        <label for="imageFile" class="form-label fw-semibold">
+                            🖼️ @(string.IsNullOrEmpty(Model.ImageURL) ? "Upload Image (optional)" : "Replace Image (optional)")
+                        </label>
+                        <input type="file" name="imageFile" id="imageFile" class="form-control"
+                               accept="image/*" style="border-radius:8px;" />
+                        <div class="form-text small text-muted">Leave empty to keep the current image.</div>
                         <span asp-validation-for="ImageURL" class="text-danger small"></span>
+                    </div>
+
+                    @* Part 2 — Preview new image before upload *@
+                    <div class="mb-3" id="imagePreviewContainer" style="display:none;">
+                        <label class="form-label fw-semibold small text-muted">New Image Preview</label><br />
+                        <img id="imagePreview" src="#" alt="Preview"
+                             style="max-width:200px; max-height:150px; object-fit:cover; border-radius:8px; border:1px solid #dee2e6;" />
                     </div>
 
                     <div class="d-flex gap-2">
@@ -55,5 +90,23 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @* Part 2 — Image preview script for the replacement upload *@
+    <script>
+        document.getElementById('imageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    document.getElementById('imagePreview').src = ev.target.result;
+                    document.getElementById('imagePreviewContainer').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('imagePreviewContainer').style.display = 'none';
+            }
+        });
+    </script>
 }

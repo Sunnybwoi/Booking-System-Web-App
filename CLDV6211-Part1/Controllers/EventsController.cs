@@ -23,11 +23,26 @@ namespace CLDV6211_POE_PART1.Controllers
         }
 
         // GET: Events
-        // Retrieves a list of all events from the database, including their associated venues, and passes it to the view for display
-        public async Task<IActionResult> Index()
+        // Retrieves a list of all events from the database, including their associated venues, and passes it to the view for display.
+        // Part 2: accepts an optional searchQuery parameter to filter events by name or associated venue name.
+        public async Task<IActionResult> Index(string searchQuery)
         {
-            var cLDV6211_Part1Context = _context.Events.Include(e => e.Venue);
-            return View(await cLDV6211_Part1Context.ToListAsync());
+            var events = _context.Events.Include(e => e.Venue).AsQueryable();
+
+            /* Search feature added in Part 2 — filters events by name or the name of their
+             * associated venue when the user submits a search query from the Index view.
+             * Code completion assisted by Visual Studio IntelliSense
+             * (Microsoft Corporation, 2022). Version 17.8.
+             */
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                events = events.Where(e =>
+                    e.Name.Contains(searchQuery) ||
+                    (e.Venue != null && e.Venue.Name.Contains(searchQuery)));
+                ViewBag.SearchQuery = searchQuery;
+            }
+
+            return View(await events.ToListAsync());
         }
 
         /* GET: Events/Details/5
@@ -66,8 +81,8 @@ namespace CLDV6211_POE_PART1.Controllers
 
             var model = new Models.ViewModels.EventFormViewModel
             {
-                StartDate = DateTime.Now, 
-                EndDate = DateTime.Now,  
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now,
                 VenueSelectList = new SelectList(venues, "Value", "Text")
             };
 
@@ -123,7 +138,7 @@ namespace CLDV6211_POE_PART1.Controllers
             {
                 return NotFound();
             }
-             
+
             var @event = await _context.Events.FindAsync(id); // Retrieves the event from the database context based on the provided ID
             if (@event == null)
             {
@@ -200,6 +215,8 @@ namespace CLDV6211_POE_PART1.Controllers
         /* GET: Events/Delete/5
          * Retrieves the event to be deleted based on the provided ID, including its associated venue,
          * and passes it to the view for confirmation before deletion.
+         * Part 2: checks for active bookings before showing the delete confirmation view — redirects
+         * with an error message if any bookings are linked to this event.
          * Code completion assisted by Visual Studio IntelliSense
          *(Microsoft Corporation, 2022).Version 17.8. */
 
@@ -210,13 +227,28 @@ namespace CLDV6211_POE_PART1.Controllers
                 return NotFound();
             }
 
+            /* Part 2 — Include Bookings so we can enforce the deletion guard check.
+             * Events with active bookings must not be deleted, per Part 2 requirements.
+             * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
+             */
             var @event = await _context.Events
                 .Include(e => e.Venue)
+                .Include(e => e.Bookings)
                 .FirstOrDefaultAsync(m => m.EventID == id);// Asynchronously finds the event with the specified ID in the database context,
                                                            // including its associated venue, and assigns it to the variable '@event'
-            if (@event == null) 
+            if (@event == null)
             {
                 return NotFound();
+            }
+
+            /* Part 2 — Deletion Guard: prevent deletion if the event has active bookings.
+             * This satisfies the requirement to restrict deletion of events associated with active bookings.
+             * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
+             */
+            if (@event.Bookings.Any())
+            {
+                TempData["Error"] = "Cannot delete this event because it has active bookings.";
+                return RedirectToAction(nameof(Index));
             }
 
             return View(@event);
@@ -224,6 +256,8 @@ namespace CLDV6211_POE_PART1.Controllers
 
         /* POST: Events/Delete/5
          * Handles the form submission for confirming the deletion of an event.
+         * Part 2: deletion is blocked on the POST handler as well if active bookings exist,
+         * preventing the guard from being bypassed via a direct POST request.
          * Code completion assisted by Visual Studio IntelliSense
          * (Microsoft Corporation, 2022). Version 17.8. */
 
@@ -231,13 +265,27 @@ namespace CLDV6211_POE_PART1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @event = await _context.Events.FindAsync(id);
+            /* Part 2 — Include Bookings on the POST handler to enforce deletion guard.
+             * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
+             */
+            var @event = await _context.Events
+                .Include(e => e.Bookings)
+                .FirstOrDefaultAsync(e => e.EventID == id);
+
             if (@event != null) // Checks if the event exists before attempting to remove it from the database context and save changes
             {
+                /* Part 2 — Deletion Guard (POST): re-check bookings to prevent bypass. */
+                if (@event.Bookings.Any())
+                {
+                    TempData["Error"] = "Cannot delete this event because it has active bookings.";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Events.Remove(@event);// Removes the event from the database context, marking it for deletion when changes are saved
             }
 
             await _context.SaveChangesAsync();// Saves the changes to the database after removing the event, ensuring that the deletion is persisted
+            TempData["Success"] = "Event deleted successfully!";
             return RedirectToAction(nameof(Index));
         }
 

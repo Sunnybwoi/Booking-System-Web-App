@@ -23,10 +23,30 @@ namespace CLDV6211_POE_PART1.Controllers
 
         // GET: Bookings
         // This action method retrieves a list of all bookings from the database, including related event data, and passes it to the view for display.
-        public async Task<IActionResult> Index()
+        // Part 2: accepts an optional searchQuery parameter to filter bookings by customer name, event name, or venue name.
+        public async Task<IActionResult> Index(string searchQuery)
         {
-            var cLDV6211_Part1Context = _context.Bookings.Include(b => b.Event);
-            return View(await cLDV6211_Part1Context.ToListAsync());
+            /* Part 2 — Consolidated bookings view with search.
+             * The query now eagerly loads Event → Venue so the Index view can
+             * display a full consolidated table showing customer, event, and venue details.
+             * Search filters across customer name, event name, and venue name.
+             * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
+             */
+            var bookings = _context.Bookings
+                .Include(b => b.Event)
+                    .ThenInclude(e => e != null ? e.Venue : null)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                bookings = bookings.Where(b =>
+                    (b.CustomerName != null && b.CustomerName.Contains(searchQuery)) ||
+                    (b.Event != null && b.Event.Name.Contains(searchQuery)) ||
+                    (b.Event != null && b.Event.Venue != null && b.Event.Venue.Name.Contains(searchQuery)));
+                ViewBag.SearchQuery = searchQuery;
+            }
+
+            return View(await bookings.ToListAsync());
         }
 
         /* GET: Bookings/Details/5
@@ -75,7 +95,9 @@ namespace CLDV6211_POE_PART1.Controllers
         /* POST: Bookings/Create
          * To protect from overposting attacks, enable the specific properties you want to bind to.
          * It handles the form submission for creating a new venue, validates the model, and if valid, 
-         * adds the new venue to the database and saves changes
+         * adds the new venue to the database and saves changes.
+         * Part 2: includes a double-booking validation check — if the same venue is already booked
+         * on the chosen date, the booking is rejected with a model error.
          * Code completion assisted by Visual Studio IntelliSense
          * (Microsoft Corporation, 2022). Version 17.8.
          */
@@ -85,15 +107,90 @@ namespace CLDV6211_POE_PART1.Controllers
         {
             if (ModelState.IsValid)
             {
+                /* Part 2 — Double-Booking Validation
+                 * Checks whether the venue associated with the selected event is already booked
+                 * on the same date. If a conflict exists, a model error is added and the form
+                 * is returned to the user with the error message displayed.
+                 * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
+                 */
+                var selectedEvent = await _context.Events
+                    .Include(e => e.Venue)
+                    .FirstOrDefaultAsync(e => e.EventID == booking.EventID);
+
+                if (selectedEvent != null)
+                {
+                    bool doubleBooking = await _context.Bookings
+                        .Include(b => b.Event)
+                        .AnyAsync(b =>
+                            b.Event != null &&
+                            b.Event.VenueID == selectedEvent.VenueID &&
+                            // Compare event start dates (not booking CreatedAt) to detect venue/date conflicts
+                            b.Event.StartDate.Date == selectedEvent.StartDate.Date &&
+                            b.BookingID != booking.BookingID);
+
+                    if (doubleBooking)
+                    {
+                        ModelState.AddModelError(string.Empty,
+                            "This venue is already booked on the selected date. Please choose a different date or event.");
+                        var eventsForError = _context.Events
+                            .Select(e => new SelectListItem { Value = e.EventID.ToString(), Text = e.EventID + " (" + e.Name + ")" })
+                            .ToList();
+                        var modelForError = new Models.ViewModels.BookingFormViewModel
+                        {
+                            BookingID = booking.BookingID,
+                            EventID = booking.EventID,
+                            CustomerName = booking.CustomerName,
+                            ContactInfo = booking.ContactInfo,
+                            Status = booking.Status,
+                            CreatedAt = booking.CreatedAt,
+                            EventSelectList = new SelectList(eventsForError, "Value", "Text", booking.EventID.ToString())
+                        };
+                        return View(modelForError);
+                    }
+
+                    // Prevent the same customer from booking the same event more than once
+                    bool customerDuplicate = await _context.Bookings
+                        .AnyAsync(b => b.EventID == booking.EventID && b.ContactInfo == booking.ContactInfo);
+
+                    if (customerDuplicate)
+                    {
+                        ModelState.AddModelError(string.Empty, "You have already booked this event with the same contact details.");
+                        var eventsForError = _context.Events
+                            .Select(e => new SelectListItem { Value = e.EventID.ToString(), Text = e.EventID + " (" + e.Name + ")" })
+                            .ToList();
+                        var modelForError = new Models.ViewModels.BookingFormViewModel
+                        {
+                            BookingID = booking.BookingID,
+                            EventID = booking.EventID,
+                            CustomerName = booking.CustomerName,
+                            ContactInfo = booking.ContactInfo,
+                            Status = booking.Status,
+                            CreatedAt = booking.CreatedAt,
+                            EventSelectList = new SelectList(eventsForError, "Value", "Text", booking.EventID.ToString())
+                        };
+                        return View(modelForError);
+                    }
+                }
+
                 _context.Add(booking);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Booking created successfully!";
                 return RedirectToAction(nameof(Index));
             }
             var events = _context.Events
                 .Select(e => new SelectListItem { Value = e.EventID.ToString(), Text = e.EventID + " (" + e.Name + ")" })
                 .ToList();
-            ViewData["EventID"] = new SelectList(events, "Value", "Text", booking.EventID.ToString());
-            return View(booking);
+            var modelInvalid = new Models.ViewModels.BookingFormViewModel
+            {
+                BookingID = booking.BookingID,
+                EventID = booking.EventID,
+                CustomerName = booking.CustomerName,
+                ContactInfo = booking.ContactInfo,
+                Status = booking.Status,
+                CreatedAt = booking.CreatedAt,
+                EventSelectList = new SelectList(events, "Value", "Text", booking.EventID.ToString())
+            };
+            return View(modelInvalid);
         }
 
         /* GET: Bookings/Edit/5
@@ -135,6 +232,8 @@ namespace CLDV6211_POE_PART1.Controllers
          * To protect from overposting attacks, enable the specific properties you want to bind to.
          * It handles the form submission for editing an existing booking, validates the model, and if valid, it updates the booking in the database and saves changes. 
          * It also includes error handling for concurrency issues that may arise when multiple users attempt to edit the same booking simultaneously.
+         * Part 2: double-booking check is also applied on edit — the current booking is excluded
+         * from the conflict check so it does not flag itself as a duplicate.
          * Code completion assisted by Visual Studio IntelliSense
          * (Microsoft Corporation, 2022). Version 17.8.
          */
@@ -154,6 +253,52 @@ namespace CLDV6211_POE_PART1.Controllers
                     var existing = await _context.Bookings.FindAsync(id);
                     if (existing == null) return NotFound();
 
+                    /* Part 2 — Double-Booking Validation on Edit
+                     * Excludes the current booking (by BookingID) from the conflict check
+                     * so that saving an unchanged booking does not trigger a false positive.
+                     * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
+                     */
+                    var selectedEvent = await _context.Events
+                        .Include(e => e.Venue)
+                        .FirstOrDefaultAsync(e => e.EventID == model.EventID);
+
+                    if (selectedEvent != null)
+                    {
+                        bool doubleBooking = await _context.Bookings
+                            .Include(b => b.Event)
+                            .AnyAsync(b =>
+                                b.Event != null &&
+                                b.Event.VenueID == selectedEvent.VenueID &&
+                                // Compare event start dates (not booking CreatedAt) to detect venue/date conflicts
+                                b.Event.StartDate.Date == selectedEvent.StartDate.Date &&
+                                b.BookingID != model.BookingID);
+
+                        if (doubleBooking)
+                        {
+                            ModelState.AddModelError(string.Empty,
+                                "This venue is already booked on the selected date. Please choose a different date or event.");
+                            var eventsForError = _context.Events
+                                .Select(e => new SelectListItem { Value = e.EventID.ToString(), Text = e.EventID + " (" + e.Name + ")" })
+                                .ToList();
+                            model.EventSelectList = new SelectList(eventsForError, "Value", "Text", model.EventID.ToString());
+                            return View(model);
+                        }
+
+                        // Prevent the same customer from booking the same event more than once (exclude current booking)
+                        bool customerDuplicate = await _context.Bookings
+                            .AnyAsync(b => b.EventID == model.EventID && b.ContactInfo == model.ContactInfo && b.BookingID != model.BookingID);
+
+                        if (customerDuplicate)
+                        {
+                            ModelState.AddModelError(string.Empty, "You have already booked this event with the same contact details.");
+                            var eventsForError = _context.Events
+                                .Select(e => new SelectListItem { Value = e.EventID.ToString(), Text = e.EventID + " (" + e.Name + ")" })
+                                .ToList();
+                            model.EventSelectList = new SelectList(eventsForError, "Value", "Text", model.EventID.ToString());
+                            return View(model);
+                        }
+                    }
+
                     existing.EventID = model.EventID;
                     existing.CustomerName = model.CustomerName;
                     existing.ContactInfo = model.ContactInfo;
@@ -162,6 +307,7 @@ namespace CLDV6211_POE_PART1.Controllers
 
                     _context.Update(existing);
                     await _context.SaveChangesAsync();
+                    TempData["Success"] = "Booking updated successfully!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -225,6 +371,7 @@ namespace CLDV6211_POE_PART1.Controllers
             }
 
             await _context.SaveChangesAsync();// Asynchronously saves the changes to the database, which will execute the deletion of the booking if it was found and marked for removal
+            TempData["Success"] = "Booking deleted successfully!";
             return RedirectToAction(nameof(Index));
         }
 

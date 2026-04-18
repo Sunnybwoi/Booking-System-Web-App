@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CLDV6211_POE_PART1.Data;
 using CLDV6211_POE_PART1.Models;
+using CLDV6211_Part1.Services;
 
 namespace CLDV6211_POE_PART1.Controllers
 {
@@ -14,18 +15,43 @@ namespace CLDV6211_POE_PART1.Controllers
     {
         private readonly CLDV6211_DbContext _context; // Database context for accessing Venue and related entities
 
+        /* BlobService handles image uploads and deletions via the Azurite local blob emulator.
+         * Added in Part 2 to replace placeholder ImageURL text input with actual file upload functionality.
+         * Code completion assisted by Visual Studio IntelliSense
+         * (Microsoft Corporation, 2022). Version 17.8.
+         */
+        private readonly BlobService _blobService;
+
         // Constructor that initializes the database context through dependency injection,
-        // allowing the controller to interact with the database
-        public VenuesController(CLDV6211_DbContext context)
+        // allowing the controller to interact with the database.
+        // BlobService is also injected here to support image upload/delete operations added in Part 2.
+        public VenuesController(CLDV6211_DbContext context, BlobService blobService)
         {
             _context = context;
+            _blobService = blobService;
         }
 
         // GET: Venue
-        // Retrieves a list of all venues from the database, and passes it to the view for display
-        public async Task<IActionResult> Index()
+        // Retrieves a list of all venues from the database, and passes it to the view for display.
+        // Part 2: accepts an optional searchQuery parameter to filter venues by name or location.
+        public async Task<IActionResult> Index(string searchQuery)
         {
-            return View(await _context.Venues.ToListAsync());
+            var venues = _context.Venues.AsQueryable();
+
+            /* Search feature added in Part 2 — filters venues by name or location
+             * when the user submits a search query from the search bar in the Index view.
+             * Code completion assisted by Visual Studio IntelliSense
+             * (Microsoft Corporation, 2022). Version 17.8.
+             */
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                venues = venues.Where(v =>
+                    v.Name.Contains(searchQuery) ||
+                    v.Location.Contains(searchQuery));
+                ViewBag.SearchQuery = searchQuery;
+            }
+
+            return View(await venues.ToListAsync());
         }
 
         /* GET: Venue/Details/5
@@ -63,18 +89,39 @@ namespace CLDV6211_POE_PART1.Controllers
         /* POST: Venue/Create
          * To protect from overposting attacks, enable the specific properties you want to bind to.
          * It handles the form submission for creating a new venue, validates the model, and if valid, 
-         * adds the new venue to the database and saves changes
+         * adds the new venue to the database and saves changes.
+         * Part 2: accepts an optional imageFile (IFormFile) for blob upload via Azurite.
+         * If a file is provided it is uploaded and the resulting blob URL is stored in ImageURL.
          * Code completion assisted by Visual Studio IntelliSense
          * (Microsoft Corporation, 2022). Version 17.8.
          */
         [HttpPost] // Specifies that this action method should only handle HTTP POST requests, which is appropriate for form submissions that create new resources
         [ValidateAntiForgeryToken] // Validates the anti-forgery token to prevent Cross-Site Request Forgery (CSRF) attacks, ensuring that the form submission is legitimate and comes from the expected source
-        public async Task<IActionResult> Create([Bind("VenueID,Name,Location,Capacity,ImageURL,CreatedAt")] Venue venue)
+        public async Task<IActionResult> Create([Bind("VenueID,Name,Location,Capacity,ImageURL,CreatedAt")] Venue venue, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
+                /* Part 2 — Image Upload via Azurite Local Blob Emulator
+                 * If the user selects a file, upload it to the 'venue-images' container
+                 * and store the returned blob URL in the venue's ImageURL property.
+                 * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
+                 */
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    try
+                    {
+                        venue.ImageURL = await _blobService.UploadImageAsync(imageFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError("ImageURL", ex.Message);
+                        return View(venue);
+                    }
+                }
+
                 _context.Add(venue);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Venue created successfully!";
                 return RedirectToAction(nameof(Index));
             }
             return View(venue);
@@ -104,13 +151,13 @@ namespace CLDV6211_POE_PART1.Controllers
          * To protect from overposting attacks, enable the specific properties you want to bind to.
          * It handles the form submission for editing an existing venue, validates the model, and if valid, it updates the venue in the database and saves changes. 
          * It also includes error handling for concurrency issues that may arise when multiple users attempt to edit the same venue simultaneously.
+         * Part 2: if a new imageFile is provided, the old blob is deleted and replaced with the new upload.
          * Code completion assisted by Visual Studio IntelliSense
          * (Microsoft Corporation, 2022). Version 17.8.
          */
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("VenueID,Name,Location,Capacity,ImageURL,CreatedAt")] Venue venue)
+        public async Task<IActionResult> Edit(int id, [Bind("VenueID,Name,Location,Capacity,ImageURL,CreatedAt")] Venue venue, IFormFile? imageFile)
         {
             if (id != venue.VenueID) // Checks if the provided ID does not match the VenueID of the venue being edited, and if so, returns a NotFound result, indicating that the requested resource cannot be found or accessed with the provided ID
             {
@@ -121,8 +168,21 @@ namespace CLDV6211_POE_PART1.Controllers
             {
                 try // Attempts to update the venue in the database context and save changes.
                 {
+                    /* Part 2 — Replace existing blob image if a new file is uploaded.
+                     * The old image is deleted from Azurite before uploading the replacement.
+                     * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
+                     */
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        if (!string.IsNullOrEmpty(venue.ImageURL))
+                            await _blobService.DeleteImageAsync(venue.ImageURL);
+
+                        venue.ImageURL = await _blobService.UploadImageAsync(imageFile);
+                    }
+
                     _context.Update(venue);
                     await _context.SaveChangesAsync();
+                    TempData["Success"] = "Venue updated successfully!";
                 }
                 catch (DbUpdateConcurrencyException) // Catches exceptions that occur when there is a concurrency conflict during the update operation, which can happen when multiple users attempt to edit the same venue at the same time
                 {
@@ -135,13 +195,21 @@ namespace CLDV6211_POE_PART1.Controllers
                         throw; // If the venue still exists but there is a concurrency conflict, it rethrows the exception to be handled by higher-level error handling mechanisms, allowing for appropriate error responses or logging
                     }
                 }
+                catch (Exception ex)
+                {
+                    // Surface blob/upload/storage errors to the UI so the user sees a message instead of the debugger stopping
+                    ModelState.AddModelError("ImageURL", ex.Message);
+                    return View(venue);
+                }
                 return RedirectToAction(nameof(Index)); // After successfully updating the venue, it redirects the user to the Index action, which typically displays a list of all venues, allowing the user to see the updated information in the context of the entire list
             }
             return View(venue);
         }
 
         /* GET: Venue/Delete/5
-         * It retrieves the details of a specific venue based on the provided ID, and passes it to the view for confirmation before deletion
+         * It retrieves the details of a specific venue based on the provided ID, and passes it to the view for confirmation before deletion.
+         * Part 2: checks for active bookings before showing the delete confirmation view — redirects
+         * with an error message if any bookings are associated with the venue.
          * Code completion assisted by Visual Studio IntelliSense
          * (Microsoft Corporation, 2022).Version 17.8.
          */
@@ -152,18 +220,36 @@ namespace CLDV6211_POE_PART1.Controllers
                 return NotFound();
             }
 
+            /* Part 2 — Include Bookings in the query so we can check for active bookings
+             * before allowing deletion, as required by the deletion guard logic.
+             * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
+             */
             var venue = await _context.Venues
+                .Include(v => v.Bookings)
+                .Include(v => v.Events)
                 .FirstOrDefaultAsync(m => m.VenueID == id);// Asynchronously finds the venue with the specified ID in the database context, and assigns it to the variable 'venue'
             if (venue == null)
             {
                 return NotFound();
             }
 
+            /* Part 2 — Deletion Guard: prevent deletion if the venue has active bookings.
+             * This satisfies the requirement to restrict deletion of venues associated with active bookings.
+             * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
+             */
+            if (venue.Bookings.Any() || venue.Events.Any())
+            {
+                TempData["Error"] = "Cannot delete this venue because it has active bookings or associated events.";
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(venue);
         }
 
         /* POST: Venue/Delete/5
-         * It handles the form submission for confirming the deletion of a venue, finds the venue in the database, removes it, and saves changes. 
+         * It handles the form submission for confirming the deletion of a venue, finds the venue in the database, removes it, and saves changes.
+         * Part 2: deletion is blocked if the venue has active bookings. The blob image is also
+         * deleted from Azurite when the venue is removed.
          * Code completion assisted by Visual Studio IntelliSense
          * (Microsoft Corporation, 2022). Version 17.8.
          */
@@ -173,14 +259,38 @@ namespace CLDV6211_POE_PART1.Controllers
                                   // ensuring that the form submission for deleting a venue is legitimate and comes from the expected source
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var venue = await _context.Venues.FindAsync(id);// Asynchronously finds the venue with the specified ID in the database context,
+            /* Part 2 — Include Bookings to enforce the deletion guard check on POST as well,
+             * preventing bypassing the guard via a direct POST request.
+             * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
+             */
+            var venue = await _context.Venues
+                .Include(v => v.Bookings)
+                .Include(v => v.Events)
+                .FirstOrDefaultAsync(v => v.VenueID == id);// Asynchronously finds the venue with the specified ID in the database context,
                                                             // and assigns it to the variable 'venue'
             if (venue != null)
             {
+                /* Part 2 — Deletion Guard (POST): re-check bookings on the POST handler
+                 * to prevent deletion even if the GET guard is bypassed.
+                 */
+                if (venue.Bookings.Any() || venue.Events.Any())
+                {
+                    TempData["Error"] = "Cannot delete this venue because it has active bookings or associated events.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                /* Part 2 — Delete the associated blob image from Azurite before removing
+                 * the venue record, to avoid orphaned blobs in the local container.
+                 * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
+                 */
+                if (!string.IsNullOrEmpty(venue.ImageURL))
+                    await _blobService.DeleteImageAsync(venue.ImageURL);
+
                 _context.Venues.Remove(venue);// removes the venue from the database context, marking it for deletion when changes are saved
             }
 
             await _context.SaveChangesAsync();// Asynchronously saves the changes to the database, which will execute the deletion of the venue from the database
+            TempData["Success"] = "Venue deleted successfully!";
             return RedirectToAction(nameof(Index));
         }
 

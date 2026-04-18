@@ -15,11 +15,19 @@
         public string Name { get; set; } // Name of the venue
         public string Location { get; set; } // Physical address or description of the venue's location
         public int Capacity { get; set; } // Maximum number of people the venue can accommodate
-        public string ImageURL { get; set; } // URL to an image representing the venue
+        public string? ImageURL { get; set; } // URL to an image representing the venue (populated via Azurite blob upload in Part 2)
         public DateTime CreatedAt { get; set; } = DateTime.Now; // Timestamp for when the venue was created
 
         // Navigation property required by the DbContext mapping
         public ICollection<Event> Events { get; set; } = new List<Event>();
+
+        /* Navigation property for Bookings associated with this venue.
+         * Added in Part 2 to support deletion guard logic — prevents deletion
+         * of venues that have active bookings linked to them.
+         * Code completion assisted by Visual Studio IntelliSense
+         * (Microsoft Corporation, 2022). Version 17.8.
+         */
+        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }
 }
 

@@ -1,7 +1,11 @@
+using System;
+using System.Threading.Tasks;
 using CLDV6211_POE_PART1;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using CLDV6211_POE_PART1.Data;
+using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,16 +27,24 @@ builder.Services.AddDbContext<CLDV6211_DbContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+//Use scoped instead of Singleton for services that interact with the database to ensure a new instance per request
+builder.Services.AddScoped<CLDV6211_Part1.Services.BlobService>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+// Ensure developer exception page is enabled in Development so exceptions are visible in-browser
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
@@ -44,8 +56,33 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// Register global exception handlers to log unobserved exceptions (helps diagnose crashes while debugging)
+try
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
-app.Run();
+    AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+    {
+        if (eventArgs.ExceptionObject is Exception ex)
+            logger.LogCritical(ex, "Unhandled exception (AppDomain)");
+        else
+            logger.LogCritical("Unhandled exception (AppDomain): {Obj}", eventArgs.ExceptionObject);
+    };
+
+    TaskScheduler.UnobservedTaskException += (sender, eventArgs) =>
+    {
+        logger.LogError(eventArgs.Exception, "Unobserved task exception");
+        eventArgs.SetObserved();
+    };
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    // Log to console as a fallback so you can see the error when running without the debugger
+    Console.Error.WriteLine(ex.ToString());
+    throw;
+}
 
 /*References
  * Microsoft Corporation (2022) Visual Studio IntelliSense [Software]. Version 17.8. 

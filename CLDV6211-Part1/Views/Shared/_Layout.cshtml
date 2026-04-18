@@ -26,6 +26,27 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    @{ 
+                        var currentController = (ViewContext.RouteData.Values["controller"] ?? string.Empty).ToString();
+                        var currentAction = (ViewContext.RouteData.Values["action"] ?? string.Empty).ToString();
+                    }
+                    @* Show a compact search box on the top-right only on the Home/Index page *@
+                    @if (currentController == "Home" && currentAction == "Index")
+                    {
+                        <form method="get" asp-controller="Home" asp-action="SearchResults" class="d-flex ms-auto" style="max-width:420px;">
+                            <div class="input-group">
+                                <input type="text" name="searchQuery" class="form-control form-control-sm"
+                                       placeholder="Search events, venues or bookings..."
+                                       value="@ViewBag.SearchQuery"
+                                       style="border-radius:8px 0 0 8px;" />
+                                <button class="btn btn-sm" type="submit" style="background-color:#0f3460; color:white; border-radius:0 8px 8px 0;">🔍</button>
+                                @if (!string.IsNullOrEmpty(ViewBag.SearchQuery as string))
+                                {
+                                    <a asp-controller="Home" asp-action="Index" class="btn btn-sm btn-outline-secondary ms-2" style="border-radius:8px;">✕</a>
+                                }
+                            </div>
+                        </form>
+                    }
                 </div>
             </div>
         </nav>

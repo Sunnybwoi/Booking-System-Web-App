@@ -9,6 +9,15 @@
     <p class="text-muted small mb-0">Add a new venue to the system.</p>
 </div>
 
+@* Part 2 — Success/Error alert banners *@
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show small" role="alert">
+        ⚠️ @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="row justify-content-center">
     <div class="col-md-7">
         <div class="card shadow border-0" style="border-radius:12px; overflow:hidden;">
@@ -16,7 +25,8 @@
                 <h5 class="text-white fw-bold mb-0">Venue Details</h5>
             </div>
             <div class="card-body p-4">
-                <form asp-action="Create" method="post">
+                @* Part 2 — enctype="multipart/form-data" is required for file upload to work *@
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
 
                     <div class="mb-3">
@@ -37,10 +47,22 @@
                         <span asp-validation-for="Capacity" class="text-danger small"></span>
                     </div>
 
+                    @* Part 2 — Image Upload (replaces plain URL text input).
+                       The selected file is uploaded to the Azurite 'venue-images' blob container
+                       and the returned blob URL is stored in ImageURL automatically by the controller. *@
                     <div class="mb-3">
-                        <label asp-for="ImageURL" class="form-label fw-semibold">🖼️ Image URL (optional)</label>
-                        <input asp-for="ImageURL" class="form-control" placeholder="https://..." style="border-radius:8px;" />
+                        <label for="imageFile" class="form-label fw-semibold">🖼️ Venue Image (optional)</label>
+                        <input type="file" name="imageFile" id="imageFile" class="form-control"
+                               accept="image/*" style="border-radius:8px;" />
+                        <div class="form-text small text-muted">Accepted formats: JPEG, PNG, GIF, WEBP. Stored in local Azurite blob container.</div>
                         <span asp-validation-for="ImageURL" class="text-danger small"></span>
+                    </div>
+
+                    @* Part 2 — Live image preview shown as soon as a file is selected *@
+                    <div class="mb-3" id="imagePreviewContainer" style="display:none;">
+                        <label class="form-label fw-semibold small text-muted">Preview</label><br />
+                        <img id="imagePreview" src="#" alt="Preview"
+                             style="max-width:200px; max-height:150px; object-fit:cover; border-radius:8px; border:1px solid #dee2e6;" />
                     </div>
 
                     <div class="d-flex gap-2">
@@ -54,5 +76,23 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @* Part 2 — Image preview script: reads the selected file and shows a preview before upload *@
+    <script>
+        document.getElementById('imageFile').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    document.getElementById('imagePreview').src = ev.target.result;
+                    document.getElementById('imagePreviewContainer').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('imagePreviewContainer').style.display = 'none';
+            }
+        });
+    </script>
 }

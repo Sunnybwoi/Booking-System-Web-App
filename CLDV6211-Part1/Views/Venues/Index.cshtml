@@ -12,6 +12,40 @@
     <a asp-action="Create" class="btn btn-sm px-4" style="background-color:#e94560; color:white; border-radius:8px;">+ New Venue</a>
 </div>
 
+@* Search bar: filters venues by name or location *@
+<form method="get" class="mb-4">
+    <div class="input-group" style="max-width:480px;">
+        <input type="text" name="searchQuery" class="form-control"
+               placeholder="Search by venue or location..."
+               value="@ViewBag.SearchQuery"
+               style="border-radius:8px 0 0 8px;" />
+        <button class="btn btn-sm px-3" type="submit"
+                style="background-color:#0f3460; color:white; border-radius:0 8px 8px 0;">
+            🔍 Search
+        </button>
+        @if (!string.IsNullOrEmpty(ViewBag.SearchQuery as string))
+        {
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary ms-2" style="border-radius:8px;">✕ Clear</a>
+        }
+    </div>
+</form>
+
+@* Show TempData feedback messages (error / success) so deletion guards surface to the user *@
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show small" role="alert">
+        ⚠️ @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show small" role="alert">
+        ✅ @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 @if (!Model.Any())
 {
     <div class="text-center py-5 text-muted">

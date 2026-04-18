@@ -31,6 +31,36 @@ namespace CLDV6211_POE_PART1.Controllers
             return View(model);
         }
 
+        // SearchResults: shows categorized search results for Venues, Events and Bookings.
+        public async Task<IActionResult> SearchResults(string searchQuery)
+        {
+            var venues = _context.Venues.AsQueryable();
+            var events = _context.Events.Include(e => e.Venue).AsQueryable();
+            var bookings = _context.Bookings.Include(b => b.Event).ThenInclude(e => e.Venue).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                venues = venues.Where(v => v.Name.Contains(searchQuery) || v.Location.Contains(searchQuery));
+
+                events = events.Where(e => e.Name.Contains(searchQuery) || (e.Venue != null && e.Venue.Name.Contains(searchQuery)));
+
+                bookings = bookings.Where(b => b.CustomerName.Contains(searchQuery)
+                                               || (b.Event != null && b.Event.Name.Contains(searchQuery))
+                                               || (b.Event != null && b.Event.Venue != null && b.Event.Venue.Name.Contains(searchQuery)));
+
+                ViewBag.SearchQuery = searchQuery;
+            }
+
+            var model = new HomeIndexViewModel
+            {
+                Venues = await venues.ToListAsync(),
+                Events = await events.ToListAsync(),
+                Bookings = await bookings.ToListAsync()
+            };
+
+            return View(model);
+        }
+
         public IActionResult Privacy()
         {
             return View();

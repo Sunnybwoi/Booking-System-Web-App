@@ -1,0 +1,116 @@
+@model CLDV6211_POE_PART1.Models.ViewModels.HomeIndexViewModel
+@using CLDV6211_POE_PART1.Models
+@{
+    ViewData["Title"] = "Search Results — EventEase";
+    var query = ViewBag.SearchQuery as string ?? string.Empty;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+    <div>
+        <h2 class="fw-bold mb-0">🔎 Search Results</h2>
+        <p class="text-muted small mb-0">Results for "@query"</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">← Back</a>
+        <a asp-action="Index" class="btn btn-sm" style="background-color:#e94560; color:white;">✕ Clear</a>
+    </div>
+</div>
+
+@if (!Model.Venues.Any() && !Model.Events.Any() && !Model.Bookings.Any())
+{
+    <div class="text-center py-5 text-muted">
+        <h5>No results found</h5>
+        <p class="small">Try a different search term or clear to return to the home page.</p>
+    </div>
+}
+else
+{
+    @* Venues *@
+    <div class="mb-4">
+        <h4 class="fw-bold">🏛️ Venues</h4>
+        @if (!Model.Venues.Any())
+        {
+            <p class="text-muted small">No matching venues.</p>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var v in Model.Venues)
+                {
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 shadow-sm" style="border-radius:8px;">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-1">@v.Name</h6>
+                                <p class="text-muted small mb-0">📍 @v.Location | 👥 Capacity: @v.Capacity</p>
+                            </div>
+                            <div class="card-footer bg-white border-0">
+                                <a asp-controller="Venues" asp-action="Details" asp-route-id="@v.VenueID" class="btn btn-sm w-100" style="background-color:#e94560; color:white; border-radius:8px;">View</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    @* Events *@
+    <div class="mb-4">
+        <h4 class="fw-bold">📅 Events</h4>
+        @if (!Model.Events.Any())
+        {
+            <p class="text-muted small">No matching events.</p>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var e in Model.Events)
+                {
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 shadow-sm" style="border-radius:8px; overflow:hidden;">
+                            <div class="py-2 px-3" style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%); color:white;">
+                                <h6 class="mb-0">@e.Name</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted small mb-0">🏛️ @(e.Venue != null ? e.Venue.Name : "No Venue")</p>
+                                <p class="text-muted small mb-0">🗓️ @e.StartDate.ToString("dd MMM yyyy") – @e.EndDate.ToString("dd MMM yyyy")</p>
+                            </div>
+                            <div class="card-footer bg-white border-0">
+                                <a asp-controller="Events" asp-action="Details" asp-route-id="@e.EventID" class="btn btn-sm w-100" style="background-color:#e94560; color:white; border-radius:8px;">View</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    @* Bookings *@
+    <div class="mb-4">
+        <h4 class="fw-bold">📋 Bookings</h4>
+        @if (!Model.Bookings.Any())
+        {
+            <p class="text-muted small">No matching bookings.</p>
+        }
+        else
+        {
+            <ul class="list-group shadow-sm">
+                @foreach (var b in Model.Bookings)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-2" style="border-radius:8px;">
+                        <div>
+                            <h6 class="fw-bold mb-1">Booking #@b.BookingID — @b.CustomerName</h6>
+                            <p class="text-muted small mb-0">
+                                📅 @(b.Event != null ? b.Event.Name : "No Event") | 🏛️ @(b.Event?.Venue?.Name ?? "—") |
+                                🗓️ @b.CreatedAt.ToString("dd MMM yyyy") |
+                                <span class="badge" style="background-color: @(b.Status == "Pending" ? "#ffc107" : b.Status == "Cancelled" ? "#dc3545" : "#28a745"); color: @(b.Status == "Pending" ? "black" : "white");">
+                                    @b.Status
+                                </span>
+                            </p>
+                        </div>
+                        <a asp-controller="Bookings" asp-action="Details" asp-route-id="@b.BookingID" class="btn btn-sm" style="background-color:#e94560; color:white; border-radius:8px;">View</a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+}

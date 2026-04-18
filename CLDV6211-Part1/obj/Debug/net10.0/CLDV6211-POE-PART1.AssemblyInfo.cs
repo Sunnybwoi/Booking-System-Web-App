@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("435766ef-3e3b-42fa-beee-e4746ac96420")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("CLDV6211-POE-PART1")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+679ab467d7423e91522bd8642781d516abb8795d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+102c34eba1429cb2aff5787ab7e194250d5ede51")]
 [assembly: System.Reflection.AssemblyProductAttribute("CLDV6211-POE-PART1")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CLDV6211-POE-PART1")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

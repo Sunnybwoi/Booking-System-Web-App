@@ -17,12 +17,12 @@ namespace CLDV6211_POE_PART1.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.2")
+                .HasAnnotation("ProductVersion", "10.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CLDV6211_Part1.Models.Booking", b =>
+            modelBuilder.Entity("CLDV6211_POE_PART1.Models.Booking", b =>
                 {
                     b.Property<int>("BookingID")
                         .ValueGeneratedOnAdd()
@@ -48,14 +48,19 @@ namespace CLDV6211_POE_PART1.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("VenueID")
+                        .HasColumnType("int");
+
                     b.HasKey("BookingID");
 
                     b.HasIndex("EventID");
 
+                    b.HasIndex("VenueID");
+
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("CLDV6211_Part1.Models.Event", b =>
+            modelBuilder.Entity("CLDV6211_POE_PART1.Models.Event", b =>
                 {
                     b.Property<int>("EventID")
                         .ValueGeneratedOnAdd()
@@ -83,7 +88,7 @@ namespace CLDV6211_POE_PART1.Migrations
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("CLDV6211_Part1.Models.Venue", b =>
+            modelBuilder.Entity("CLDV6211_POE_PART1.Models.Venue", b =>
                 {
                     b.Property<int>("VenueID")
                         .ValueGeneratedOnAdd()
@@ -98,7 +103,6 @@ namespace CLDV6211_POE_PART1.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ImageURL")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
@@ -114,20 +118,24 @@ namespace CLDV6211_POE_PART1.Migrations
                     b.ToTable("Venues");
                 });
 
-            modelBuilder.Entity("CLDV6211_Part1.Models.Booking", b =>
+            modelBuilder.Entity("CLDV6211_POE_PART1.Models.Booking", b =>
                 {
-                    b.HasOne("CLDV6211_Part1.Models.Event", "Event")
+                    b.HasOne("CLDV6211_POE_PART1.Models.Event", "Event")
                         .WithMany("Bookings")
                         .HasForeignKey("EventID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("CLDV6211_POE_PART1.Models.Venue", null)
+                        .WithMany("Bookings")
+                        .HasForeignKey("VenueID");
+
                     b.Navigation("Event");
                 });
 
-            modelBuilder.Entity("CLDV6211_Part1.Models.Event", b =>
+            modelBuilder.Entity("CLDV6211_POE_PART1.Models.Event", b =>
                 {
-                    b.HasOne("CLDV6211_Part1.Models.Venue", "Venue")
+                    b.HasOne("CLDV6211_POE_PART1.Models.Venue", "Venue")
                         .WithMany("Events")
                         .HasForeignKey("VenueID")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -136,13 +144,15 @@ namespace CLDV6211_POE_PART1.Migrations
                     b.Navigation("Venue");
                 });
 
-            modelBuilder.Entity("CLDV6211_Part1.Models.Event", b =>
+            modelBuilder.Entity("CLDV6211_POE_PART1.Models.Event", b =>
                 {
                     b.Navigation("Bookings");
                 });
 
-            modelBuilder.Entity("CLDV6211_Part1.Models.Venue", b =>
+            modelBuilder.Entity("CLDV6211_POE_PART1.Models.Venue", b =>
                 {
+                    b.Navigation("Bookings");
+
                     b.Navigation("Events");
                 });
 #pragma warning restore 612, 618
