@@ -25,6 +25,9 @@ namespace CLDV6211_POE_PART1.Models
 
         public Venue? Venue { get; set; } // Navigation property to the Venue entity (nullable to allow for events without an assigned venue)
 
+        // URL to an image representing the event (populated via Azurite blob upload in Part 2)
+        public string? ImageURL { get; set; }
+
         // Navigation property required by the EF model configuration
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }

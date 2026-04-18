@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "D:\\GitHub-Personal\\Booking System Web-App\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\controllers\\bookingscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|solutionrelative:cldv6211-part1\\controllers\\bookingscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|solutionrelative:cldv6211-part1\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -45,14 +45,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "BookingsController.cs",
-              "DocumentMoniker": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Controllers\\BookingsController.cs",
-              "RelativeDocumentMoniker": "CLDV6211-Part1\\Controllers\\BookingsController.cs",
-              "ToolTip": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Controllers\\BookingsController.cs",
-              "RelativeToolTip": "CLDV6211-Part1\\Controllers\\BookingsController.cs",
-              "ViewState": "AgIAAIAAAAAAAAAAAAAlwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T10:07:33.336Z",
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "CLDV6211-Part1\\Views\\Home\\Index.cshtml",
+              "ToolTip": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "CLDV6211-Part1\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAABwBAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-18T12:29:41.787Z",
               "EditorCaption": ""
             },
             {
@@ -63,7 +63,7 @@
               "RelativeDocumentMoniker": "CLDV6211-Part1\\Services\\BlobService.cs",
               "ToolTip": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Services\\BlobService.cs",
               "RelativeToolTip": "CLDV6211-Part1\\Services\\BlobService.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAcwF8AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABAAAAAAAAAAAIBJwJgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-18T04:15:17.539Z",
               "EditorCaption": ""

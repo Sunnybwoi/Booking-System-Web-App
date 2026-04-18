@@ -19,7 +19,7 @@
                 <h5 class="text-white fw-bold mb-0">@Model.Name</h5>
             </div>
             <div class="card-body p-4">
-                <form asp-action="Edit" method="post">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
                     <input type="hidden" asp-for="EventID" />
@@ -53,6 +53,24 @@
                                 style="border-radius:8px;">
                         </select>
                         <span asp-validation-for="VenueID" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Current Image Preview -->
+                    @if (!string.IsNullOrEmpty(Model.ImageURL))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Current Image</label>
+                            <div>
+                                <img src="@Model.ImageURL" alt="Event image" style="max-width:100%; max-height:200px; border-radius:8px;" />
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Replace Image -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Replace Image (optional)</label>
+                        <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                        <span asp-validation-for="ImageFile" class="text-danger small"></span>
                     </div>
 
                     <!-- Actions -->

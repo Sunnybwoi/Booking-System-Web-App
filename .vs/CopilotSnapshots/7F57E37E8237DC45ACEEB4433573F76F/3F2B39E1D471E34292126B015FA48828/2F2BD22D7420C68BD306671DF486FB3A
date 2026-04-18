@@ -1,0 +1,110 @@
+﻿@using CLDV6211_POE_PART1
+@using CLDV6211_POE_PART1.Models
+@model IEnumerable<CLDV6211_POE_PART1.Models.Event>
+
+@{
+    ViewData["Title"] = "Events — EventEase";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+    <div>
+        <h2 class="fw-bold mb-0">📅 Event Management</h2>
+        <p class="text-muted small mb-0">Browse and manage all scheduled events.</p>
+    </div>
+    <a asp-action="Create"
+       class="btn btn-sm px-4"
+       style="background-color:#e94560; color:white; border-radius:8px;">
+        + New Event
+    </a>
+</div>
+
+@* Search bar: filters events by event name or associated venue name *@
+<form method="get" class="mb-4">
+    <div class="input-group" style="max-width:480px;">
+        <input type="text" name="searchQuery" class="form-control"
+               placeholder="Search by event or venue..."
+               value="@ViewBag.SearchQuery"
+               style="border-radius:8px 0 0 8px;" />
+        <button class="btn btn-sm px-3" type="submit"
+                style="background-color:#0f3460; color:white; border-radius:0 8px 8px 0;">
+            🔍 Search
+        </button>
+        @if (!string.IsNullOrEmpty(ViewBag.SearchQuery as string))
+        {
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary ms-2" style="border-radius:8px;">✕ Clear</a>
+        }
+    </div>
+</form>
+
+@* Show TempData feedback messages (error / success) so deletion guards surface to the user *@
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show small" role="alert">
+        ⚠️ @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show small" role="alert">
+        ✅ @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5 text-muted">
+        <h1>📅</h1>
+        <h5>No Events Scheduled</h5>
+        <p class="small">Get started by creating your first event.</p>
+        <a asp-action="Create" class="btn btn-sm btn-outline-primary">+ Add Event</a>
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow border-0 h-100" style="border-radius:12px; overflow:hidden;">
+                    <!-- Card Banner -->
+                    <div class="py-3 px-4"
+                         style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);">
+                        <span class="badge mb-1"
+                              style="background-color:#e94560;">
+                            @(item.StartDate > DateTime.Now ? "Upcoming" : "Ongoing")
+                        </span>
+                        <h5 class="text-white fw-bold mb-0">@item.Name</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">
+                            🏛️ @(item.Venue != null ? item.Venue.Name : "No Venue Assigned")
+                        </p>
+                        <p class="text-muted small mb-0">
+                            🗓️ @item.StartDate.ToString("dd MMM yyyy") – @item.EndDate.ToString("dd MMM yyyy")
+                        </p>
+                    </div>
+                    <div class="card-footer bg-white border-0 d-flex gap-2 pb-3 px-3">
+                        <a asp-action="Details" asp-route-id="@item.EventID"
+                           class="btn btn-sm flex-fill"
+                           style="background-color:#e94560; color:white; border-radius:8px;">
+                            View
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@item.EventID"
+                           class="btn btn-sm btn-outline-secondary flex-fill"
+                           style="border-radius:8px;">
+                            Edit
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.EventID"
+                           class="btn btn-sm btn-outline-danger flex-fill"
+                           style="border-radius:8px;">
+                            Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,33 @@
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace CLDV6211_POE_PART1.Models.ViewModels
+{
+    public class EventFormViewModel
+    {
+        public int EventID { get; set; }
+
+        [Required]
+        [Display(Name = "Event Name")]
+        public string Name { get; set; }
+
+        [Required]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime StartDate { get; set; } = DateTime.Now;
+
+        [Required]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime EndDate { get; set; } = DateTime.Now;
+
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Please select a venue.")]
+        public int VenueID { get; set; }
+
+        [ValidateNever]
+        public SelectList VenueSelectList { get; set; }
+    }
+}

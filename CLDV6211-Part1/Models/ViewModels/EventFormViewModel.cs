@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -29,5 +30,11 @@ namespace CLDV6211_POE_PART1.Models.ViewModels
 
         [ValidateNever]
         public SelectList VenueSelectList { get; set; }
+
+        // Optional image file for upload to blob storage
+        public IFormFile? ImageFile { get; set; }
+
+        // Image URL for display when editing/viewing
+        public string? ImageURL { get; set; }
     }
 }

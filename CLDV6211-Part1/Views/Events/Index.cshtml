@@ -78,6 +78,19 @@ else
                         </span>
                         <h5 class="text-white fw-bold mb-0">@item.Name</h5>
                     </div>
+
+                    @* Display image if available, otherwise show 'No image' *@
+                    @if (!string.IsNullOrEmpty(item.ImageURL))
+                    {
+                        <img src="@item.ImageURL" class="card-img-top" alt="Event image" style="height:220px;object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <div class="card-img-top d-flex align-items-center justify-content-center" style="height:220px;background-color:#123a5b;color:white;font-size:72px;">
+                            <span>No image</span>
+                        </div>
+                    }
+
                     <div class="card-body">
                         <p class="text-muted small mb-1">
                             🏛️ @(item.Venue != null ? item.Venue.Name : "No Venue Assigned")

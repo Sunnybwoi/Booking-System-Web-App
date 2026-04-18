@@ -3,16 +3,36 @@
   "WorkspaceRootPath": "D:\\GitHub-Personal\\Booking System Web-App\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\controllers\\bookingscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|solutionrelative:cldv6211-part1\\controllers\\bookingscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\services\\blobservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|solutionrelative:cldv6211-part1\\services\\blobservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|solutionrelative:cldv6211-part1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\services\\blobservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|solutionrelative:cldv6211-part1\\services\\blobservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\models\\event.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|solutionrelative:cldv6211-part1\\models\\event.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\models\\viewmodels\\eventformviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|solutionrelative:cldv6211-part1\\models\\viewmodels\\eventformviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\views\\events\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|solutionrelative:cldv6211-part1\\views\\events\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\views\\events\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|solutionrelative:cldv6211-part1\\views\\events\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\controllers\\eventscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|solutionrelative:cldv6211-part1\\controllers\\eventscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|d:\\github-personal\\booking system web-app\\cldv6211-part1\\views\\events\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9DDFDAE6-5044-B50C-8B1F-CAC784521177}|CLDV6211-Part1\\CLDV6211-POE-PART1.csproj|solutionrelative:cldv6211-part1\\views\\events\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,8 +42,86 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 8,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Views\\Events\\Details.cshtml",
+              "RelativeDocumentMoniker": "CLDV6211-Part1\\Views\\Events\\Details.cshtml",
+              "ToolTip": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Views\\Events\\Details.cshtml",
+              "RelativeToolTip": "CLDV6211-Part1\\Views\\Events\\Details.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-18T14:19:11.04Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "EventsController.cs",
+              "DocumentMoniker": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Controllers\\EventsController.cs",
+              "RelativeDocumentMoniker": "CLDV6211-Part1\\Controllers\\EventsController.cs",
+              "ToolTip": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Controllers\\EventsController.cs",
+              "RelativeToolTip": "CLDV6211-Part1\\Controllers\\EventsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T14:19:10.948Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Views\\Events\\Edit.cshtml",
+              "RelativeDocumentMoniker": "CLDV6211-Part1\\Views\\Events\\Edit.cshtml",
+              "ToolTip": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Views\\Events\\Edit.cshtml",
+              "RelativeToolTip": "CLDV6211-Part1\\Views\\Events\\Edit.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-18T14:19:10.857Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Views\\Events\\Create.cshtml",
+              "RelativeDocumentMoniker": "CLDV6211-Part1\\Views\\Events\\Create.cshtml",
+              "ToolTip": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Views\\Events\\Create.cshtml",
+              "RelativeToolTip": "CLDV6211-Part1\\Views\\Events\\Create.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-18T14:19:10.776Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "EventFormViewModel.cs",
+              "DocumentMoniker": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Models\\ViewModels\\EventFormViewModel.cs",
+              "RelativeDocumentMoniker": "CLDV6211-Part1\\Models\\ViewModels\\EventFormViewModel.cs",
+              "ToolTip": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Models\\ViewModels\\EventFormViewModel.cs",
+              "RelativeToolTip": "CLDV6211-Part1\\Models\\ViewModels\\EventFormViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T14:19:10.69Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Event.cs",
+              "DocumentMoniker": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Models\\Event.cs",
+              "RelativeDocumentMoniker": "CLDV6211-Part1\\Models\\Event.cs",
+              "ToolTip": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Models\\Event.cs",
+              "RelativeToolTip": "CLDV6211-Part1\\Models\\Event.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-18T14:19:10.563Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -45,25 +143,12 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "BookingsController.cs",
-              "DocumentMoniker": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Controllers\\BookingsController.cs",
-              "RelativeDocumentMoniker": "CLDV6211-Part1\\Controllers\\BookingsController.cs",
-              "ToolTip": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Controllers\\BookingsController.cs",
-              "RelativeToolTip": "CLDV6211-Part1\\Controllers\\BookingsController.cs",
-              "ViewState": "AgIAAHUAAAAAAAAAAAAAwHgAAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T10:07:33.336Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
               "Title": "BlobService.cs",
               "DocumentMoniker": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Services\\BlobService.cs",
               "RelativeDocumentMoniker": "CLDV6211-Part1\\Services\\BlobService.cs",
               "ToolTip": "D:\\GitHub-Personal\\Booking System Web-App\\CLDV6211-Part1\\Services\\BlobService.cs",
               "RelativeToolTip": "CLDV6211-Part1\\Services\\BlobService.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAcwF8AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAFQAAAAAAAAAAAAqwF4AAABZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-18T04:15:17.539Z",
               "EditorCaption": ""

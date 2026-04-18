@@ -15,6 +15,7 @@ namespace CLDV6211_Part1.Services
             private readonly ILogger<BlobService>? _logger;
             private readonly string _connectionString;
             private const string ContainerName = "venue-images";
+            private const string EventContainerName = "event-images";
 
             public BlobService(IConfiguration configuration, ILogger<BlobService> logger)
             {
@@ -25,17 +26,21 @@ namespace CLDV6211_Part1.Services
 
             private async Task<BlobContainerClient> GetContainerAsync()
             {
+                return await GetContainerAsync(ContainerName);
+            }
+
+            private async Task<BlobContainerClient> GetContainerAsync(string containerName)
+            {
                 try
                 {
                     var client = new BlobServiceClient(_connectionString);
-                    var container = client.GetBlobContainerClient(ContainerName);
+                    var container = client.GetBlobContainerClient(containerName);
                     await container.CreateIfNotExistsAsync(PublicAccessType.Blob);
                     return container;
                 }
                 catch (Exception ex)
                 {
-                    // Log and surface a friendly error so callers can handle it instead of crashing the app
-                    _logger?.LogError(ex, "Unable to access blob storage container '{ContainerName}'", ContainerName);
+                    _logger?.LogError(ex, "Unable to access blob storage container '{ContainerName}'", containerName);
                     throw new InvalidOperationException("Blob storage is unavailable. Ensure Azurite is running and the connection string is correct.", ex);
                 }
             }
@@ -73,6 +78,39 @@ namespace CLDV6211_Part1.Services
                 }
             }
 
+            // Upload image specifically to the 'event-images' container so events and venues use separate containers
+            public async Task<string> UploadEventImageAsync(IFormFile file)
+            {
+                if (file == null || file.Length == 0)
+                    throw new ArgumentException("No file provided.");
+
+                var allowedTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
+                var contentType = file.ContentType ?? string.Empty;
+                if (!allowedTypes.Contains(contentType.ToLower()))
+                    throw new InvalidOperationException("Only image files (JPEG, PNG, GIF, WEBP) are allowed.");
+
+                try
+                {
+                    var container = await GetContainerAsync(EventContainerName);
+                    var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+                    var blobClient = container.GetBlobClient(fileName);
+
+                    using var stream = file.OpenReadStream();
+                    await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = contentType });
+
+                    return blobClient.Uri.ToString();
+                }
+                catch (InvalidOperationException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogError(ex, "Failed to upload event image to blob storage");
+                    throw new InvalidOperationException("Failed to upload image. Check blob storage availability and try again.", ex);
+                }
+            }
+
             public async Task DeleteImageAsync(string imageUrl)
             {
                 if (string.IsNullOrEmpty(imageUrl)) return;
@@ -89,6 +127,25 @@ namespace CLDV6211_Part1.Services
                 {
                     // Log and swallow delete errors to avoid crashing caller flows
                     _logger?.LogWarning(ex, "Failed to delete blob '{ImageUrl}'", imageUrl);
+                }
+            }
+
+            // Delete an image from the event-images container
+            public async Task DeleteEventImageAsync(string imageUrl)
+            {
+                if (string.IsNullOrEmpty(imageUrl)) return;
+
+                try
+                {
+                    var uri = new Uri(imageUrl);
+                    var fileName = Path.GetFileName(uri.LocalPath);
+                    var container = await GetContainerAsync(EventContainerName);
+                    var blobClient = container.GetBlobClient(fileName);
+                    await blobClient.DeleteIfExistsAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogWarning(ex, "Failed to delete event blob '{ImageUrl}'", imageUrl);
                 }
             }
         }

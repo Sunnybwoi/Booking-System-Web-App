@@ -19,7 +19,7 @@
                 <h5 class="text-white fw-bold mb-0">Event Details</h5>
             </div>
             <div class="card-body p-4">
-                <form asp-action="Create" method="post">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
                     <div asp-validation-summary="All" class="alert alert-danger small"></div>
@@ -54,6 +54,13 @@
                         <option value="">-- Select a Venue --</option>
                         </select>
                         <span asp-validation-for="VenueID" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">🖼️ Event Image (optional)</label>
+                        <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                        <span asp-validation-for="ImageFile" class="text-danger small"></span>
                     </div>
 
                     <!-- Actions -->
