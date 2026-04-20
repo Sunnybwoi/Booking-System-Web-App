@@ -232,9 +232,9 @@ namespace CLDV6211_POE_PART1.Controllers
 
             if (@event == null) return NotFound();
 
-            if (@event.Bookings.Any())
+            if (@event.Bookings.Any() && @event.EndDate > DateTime.Now)
             {
-                TempData["Error"] = "Cannot delete this event because it has active bookings.";
+                TempData["Error"] = "Cannot delete this event because it has active bookings to OnGoing/Upcoming events.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -252,9 +252,9 @@ namespace CLDV6211_POE_PART1.Controllers
 
             if (@event != null)
             {
-                if (@event.Bookings.Any())
+                if (@event.Bookings.Any() && @event.EndDate > DateTime.Now)
                 {
-                    TempData["Error"] = "Cannot delete this event because it has active bookings.";
+                    TempData["Error"] = "Cannot delete this event because it has active bookings to OnGoing/Upcoming events.";
                     return RedirectToAction(nameof(Index));
                 }
 

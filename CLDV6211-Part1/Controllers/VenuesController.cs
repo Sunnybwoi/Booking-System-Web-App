@@ -237,11 +237,11 @@ namespace CLDV6211_POE_PART1.Controllers
              */
             var hasBookings = await _context.Bookings
                 .Include(b => b.Event)
-                .AnyAsync(b => b.Event != null && b.Event.VenueID == id);
+                .AnyAsync(b => b.Event != null && b.Event.VenueID == id && b.Event.EndDate > DateTime.Now);
 
             if (hasBookings)
             {
-                TempData["Error"] = "Cannot delete this venue because it has active bookings.";
+                TempData["Error"] = "Cannot delete this venue because it has active bookings to OnGoing/Upcoming events.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -276,11 +276,11 @@ namespace CLDV6211_POE_PART1.Controllers
                  */
                 var hasBookingsPost = await _context.Bookings
                     .Include(b => b.Event)
-                    .AnyAsync(b => b.Event != null && b.Event.VenueID == id);
+                    .AnyAsync(b => b.Event != null && b.Event.VenueID == id && b.Event.EndDate > DateTime.Now);
 
                 if (hasBookingsPost)
                 {
-                    TempData["Error"] = "Cannot delete this venue because it has active bookings.";
+                    TempData["Error"] = "Cannot delete this venue because it has active bookings to OnGoing/Upcoming events.";
                     return RedirectToAction(nameof(Index));
                 }
 
