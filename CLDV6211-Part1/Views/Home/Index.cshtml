@@ -9,19 +9,15 @@
     using Microsoft Visual Studio IntelliSense for code completion and best practices in ASP.NET Core MVC development.
 -->
 @{
-    ViewData["Title"] = "EventEase - Venue Booking System"; // Set the page title for SEO and browser display
+    ViewData["Title"] = "EventEase - Venue Booking System";
     var venues = Model.Venues ?? new List<Venue>();
     var events = Model.Events ?? new List<Event>();
 }
 
-<!-- Hero Section 
-    It's the first thing users see, so it should be visually appealing and clearly communicate the purpose of the application. 
-    It includes a catchy tagline, a logo, and quick links to key sections like Venues, Events, and Bookings. 
-    The design uses a modern color scheme with gradients and rounded corners to create a welcoming atmosphere.
--->
+<!-- Hero Section -->
 <div class="hero-section text-white text-center py-5 mb-4"
      style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 12px;">
-    <div class="container"> 
+    <div class="container">
         <img src="https://placehold.co/120x120/e94560/white?text=EE"
              alt="EventEase Logo"
              class="mb-3 rounded-circle"
@@ -48,10 +44,7 @@
     </div>
 </div>
 
-<!-- Stats Bar 
-    This section provides a quick snapshot of the application's key metrics, such as total venues, upcoming events, and active bookings. 
-    It uses a clean card design with icons and contrasting colors to make the information easily digestible at a glance.
--->
+<!-- Stats Bar -->
 <div class="row text-center mb-5">
     <div class="col-md-4 mb-3">
         <div class="card shadow-sm border-0 py-3" style="border-left: 4px solid #e94560 !important; border-radius:10px;">
@@ -85,13 +78,10 @@
     </div>
 </div>
 
-<!-- Featured Venues Section 
-    This section highlights featured venues with images, names, locations, and capacities. 
-    It uses a card layout with hover effects to make it visually appealing and encourages users to explore the venue details.
--->
+<!-- Featured Venues Section -->
 <div class="mb-5">
     <h3 class="fw-bold mb-4 border-bottom pb-2">🏛️ Featured Venues</h3>
-    @if (!venues.Any())// If there are no venues available, display a friendly message and a call-to-action to add the first venue
+    @if (!venues.Any())
     {
         <div class="text-center py-5 text-muted">
             <h1>🏛️</h1>
@@ -100,20 +90,20 @@
             <a asp-controller="Venues" asp-action="Create" class="btn btn-sm btn-outline-danger">+ Add Venue</a>
         </div>
     }
-    else// If there are venues available, display them in a responsive grid layout with cards for each venue
+    else
     {
         <div class="row">
             @foreach (var venue in venues)
             {
                 <div class="col-md-4 mb-4">
                     <div class="card shadow border-0 h-100" style="border-radius:12px; overflow:hidden;">
-                        @if (!string.IsNullOrEmpty(venue.ImageURL))// If the venue has an image URL, display the image with a fallback in case of an error
+                        @if (!string.IsNullOrEmpty(venue.ImageURL))
                         {
                             <img src="@venue.ImageURL" class="card-img-top" alt="@venue.Name"
                                  style="height:200px; object-fit:cover;"
                                  onerror="this.src='https://placehold.co/600x300/0f3460/white?text=No+Image'" />
                         }
-                        else// If there is no image URL, display a placeholder image
+                        else
                         {
                             <img src="https://placehold.co/600x300/0f3460/white?text=No+Image"
                                  class="card-img-top" alt="@venue.Name" style="height:200px; object-fit:cover;" />
@@ -136,12 +126,10 @@
     }
 </div>
 
-<!-- Upcoming Events Section 
-    This section showcases upcoming events with images, names, venues, and dates.
--->
+<!-- Events Section -->
 <div class="mb-5">
     <h3 class="fw-bold mb-4 border-bottom pb-2">📅 Events</h3>
-    @if (!events.Any())// If there are no events available, display a friendly message and a call-to-action to add the first event
+    @if (!events.Any())
     {
         <div class="text-center py-5 text-muted">
             <h1>📅</h1>
@@ -150,11 +138,30 @@
             <a asp-controller="Events" asp-action="Create" class="btn btn-sm btn-outline-primary">+ Add Event</a>
         </div>
     }
-    else// If there are events available, display them in a responsive grid layout with cards for each event
+    else
     {
         <div class="row">
             @foreach (var ev in events)
             {
+                // Determine status and matching badge colour based on StartDate and EndDate
+                string eventStatus;
+                string badgeColour;
+
+                if (ev.EndDate < DateTime.Now)
+                {
+                    eventStatus  = "Finished";
+                    badgeColour  = "#6c757d"; // grey
+                }
+                else if (ev.StartDate > DateTime.Now)
+                {
+                    eventStatus  = "Upcoming";
+                    badgeColour  = "#0f3460"; // dark blue
+                }
+                else
+                {
+                    eventStatus  = "Ongoing";
+                    badgeColour  = "#e94560"; // red
+                }
                 <div class="col-md-4 mb-4">
                     <div class="card shadow border-0 h-100" style="border-radius:12px; overflow:hidden;">
                         @if (!string.IsNullOrEmpty(ev.ImageURL))
@@ -169,10 +176,9 @@
                                 <span>No image</span>
                             </div>
                         }
-
                         <div class="card-body">
-                            <span class="badge mb-2" style="background-color:#e94560;">
-                                @(ev.StartDate > DateTime.Now ? "Upcoming" : "Ongoing")
+                            <span class="badge mb-2" style="background-color:@badgeColour;">
+                                @eventStatus
                             </span>
                             <h5 class="card-title fw-bold">@ev.Name</h5>
                             <p class="text-muted small">
@@ -193,16 +199,13 @@
     }
 </div>
 
-<!-- Bookings Section 
-    This section lists all current bookings with details such as booking ID, customer name, event name, venue name, booking date, and status. 
-    It uses a clean list layout with badges to indicate the status of each booking and quick access to view details.
--->
+<!-- Bookings Section -->
 <div class="mb-5">
     <h3 class="fw-bold mb-4 border-bottom pb-2">📋 All Bookings</h3>
     @{
         var bookings = Model.Bookings ?? new List<Booking>();
     }
-    @if (!bookings.Any())// If there are no bookings available, display a friendly message and a call-to-action to create the first booking
+    @if (!bookings.Any())
     {
         <div class="text-center py-5 text-muted">
             <h1>📋</h1>
@@ -211,7 +214,7 @@
             <a asp-controller="Bookings" asp-action="Create" class="btn btn-sm btn-outline-success">+ New Booking</a>
         </div>
     }
-    else// If there are bookings available, display them in a list format with details and status badges
+    else
     {
         <ul class="list-group shadow-sm">
             @foreach (var booking in bookings)
@@ -240,10 +243,7 @@
     }
 </div>
 
-<!-- How It Works Section 
-    This section provides a simple, step-by-step guide on how to use the application. 
-    It uses icons and concise descriptions to make it easy for users to understand the booking process.
--->
+<!-- How It Works Section -->
 <div class="mb-5 p-4 rounded" style="background: linear-gradient(135deg, #1a1a2e, #16213e); color:white;">
     <h3 class="fw-bold mb-4 text-center">⚙️ How It Works</h3>
     <div class="row text-center">
@@ -278,10 +278,7 @@
     </div>
 </div>
 
-<!-- Quick Actions Footer Bar 
-    This section provides quick access to key actions like adding a new venue, creating an event, or making a booking. 
-    It uses a card design with a call-to-action message and buttons for each action, encouraging users to engage with the application.
--->
+<!-- Quick Actions Footer Bar -->
 <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
     <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div>

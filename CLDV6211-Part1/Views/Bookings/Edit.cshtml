@@ -20,7 +20,9 @@
             </div>
             <div class="card-body p-4">
                 <form asp-action="Edit" method="post">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
+                    <!-- Changed from ModelOnly to All so both model-level errors (e.g. duplicate
+                         customer, venue conflict) and field-level binding errors are shown to the user -->
+                    <div asp-validation-summary="All" class="alert alert-danger small" role="alert"></div>
                     <input type="hidden" asp-for="BookingID" />
 
                     <!-- Event -->
@@ -72,8 +74,8 @@
                                class="btn px-4"
                                style="background-color:#e94560; color:white; border-radius:8px;" />
                         <a asp-action="Index"
-                           class="btn btn-outline-secondary"
-                           style="border-radius:8px;">
+                               class="btn btn-outline-secondary"
+                               style="border-radius:8px;">
                             ← Back to List
                         </a>
                     </div>
@@ -84,5 +86,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

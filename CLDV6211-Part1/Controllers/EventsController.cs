@@ -12,14 +12,12 @@ using Microsoft.Extensions.Logging;
 
 namespace CLDV6211_POE_PART1.Controllers
 {
-    public class EventsController : Controller // Controller for managing Event entities, providing CRUD operations and interactions with the database context
+    public class EventsController : Controller
     {
-        private readonly CLDV6211_DbContext _context; // Database context for accessing Event and related entities
+        private readonly CLDV6211_DbContext _context;
         private readonly CLDV6211_Part1.Services.BlobService _blobService;
         private readonly ILogger<EventsController> _logger;
 
-        // Constructor that initializes the database context through dependency injection,
-        // allowing the controller to interact with the database
         public EventsController(CLDV6211_DbContext context, CLDV6211_Part1.Services.BlobService blobService, ILogger<EventsController> logger)
         {
             _context = context;
@@ -28,17 +26,10 @@ namespace CLDV6211_POE_PART1.Controllers
         }
 
         // GET: Events
-        // Retrieves a list of all events from the database, including their associated venues, and passes it to the view for display.
-        // Part 2: accepts an optional searchQuery parameter to filter events by name or associated venue name.
         public async Task<IActionResult> Index(string searchQuery)
         {
             var events = _context.Events.Include(e => e.Venue).AsQueryable();
 
-            /* Search feature added in Part 2 — filters events by name or the name of their
-             * associated venue when the user submits a search query from the Index view.
-             * Code completion assisted by Visual Studio IntelliSense
-             * (Microsoft Corporation, 2022). Version 17.8.
-             */
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 events = events.Where(e =>
@@ -50,34 +41,21 @@ namespace CLDV6211_POE_PART1.Controllers
             return View(await events.ToListAsync());
         }
 
-        /* GET: Events/Details/5
-         * Retrieves the details of a specific event based on the provided ID, including its associated venue, and passes it to the view for display.
-         * If the ID is null or the event is not found, it returns a NotFound result.
-         * Generated with assistance from Anthropic (2026) Claude [AI assistant].
-         * Prompt: 'How do I get database contents to display always when I start/run the app C#', 23 March. */
-
+        // GET: Events/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var @event = await _context.Events
                 .Include(e => e.Venue)
                 .FirstOrDefaultAsync(m => m.EventID == id);
-            if (@event == null)
-            {
-                return NotFound();
-            }
+
+            if (@event == null) return NotFound();
 
             return View(@event);
         }
 
-        /* GET: Events/Create
-         * Prepares the view for creating a new event by populating a dropdown list of venues and returning the view to the user.
-         * Code completion assisted by Visual Studio IntelliSense
-         * (Microsoft Corporation, 2022). Version 17.8. */
+        // GET: Events/Create
         public IActionResult Create()
         {
             var venues = _context.Venues
@@ -94,19 +72,32 @@ namespace CLDV6211_POE_PART1.Controllers
             return View(model);
         }
 
-        /* POST: Events/Create
-         * Handles the form submission for creating a new event.
-         * It validates the model state, adds the new event to the database context, and saves the changes.
-         * To protect from overposting attacks, enable the specific properties you want to bind to.
-         * Code completion assisted by Visual Studio IntelliSense
-         * (Microsoft Corporation, 2022). Version 17.8. */
-
+        // POST: Events/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Models.ViewModels.EventFormViewModel model)
         {
             if (ModelState.IsValid)
             {
+                // --- Venue date-conflict check on Create ---
+                // Prevent assigning a venue that already has another non-finished event
+                // overlapping with the new event's date range.
+                bool venueConflict = await _context.Events
+                    .AnyAsync(e =>
+                        e.VenueID == model.VenueID &&
+                        e.EndDate > DateTime.Now &&                // ignore finished events
+                        e.StartDate < model.EndDate &&             // overlap condition
+                        model.StartDate < e.EndDate);              // overlap condition
+
+                if (venueConflict)
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "This venue already has another active event scheduled during that period. " +
+                        "Please choose a different venue or adjust the event dates.");
+                    model.VenueSelectList = RebuildVenueList(model.VenueID);
+                    return View(model);
+                }
+
                 var @event = new Event
                 {
                     Name = model.Name,
@@ -115,7 +106,6 @@ namespace CLDV6211_POE_PART1.Controllers
                     VenueID = model.VenueID
                 };
 
-                // If an image file was provided, upload it to the event-images container
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
                     try
@@ -125,11 +115,7 @@ namespace CLDV6211_POE_PART1.Controllers
                     catch (Exception ex)
                     {
                         ModelState.AddModelError("ImageURL", ex.Message);
-                        // repopulate venue list and return the view with the model and error
-                        var venuesErr = _context.Venues
-                            .Select(v => new SelectListItem { Value = v.VenueID.ToString(), Text = v.VenueID + " (" + v.Name + ")" })
-                            .ToList();
-                        model.VenueSelectList = new SelectList(venuesErr, "Value", "Text", model.VenueID.ToString());
+                        model.VenueSelectList = RebuildVenueList(model.VenueID);
                         return View(model);
                     }
                 }
@@ -140,38 +126,20 @@ namespace CLDV6211_POE_PART1.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Surface validation errors to the view
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
             TempData["Error"] = string.Join(" | ", errors);
 
-            var venues = _context.Venues
-                .Select(v => new SelectListItem { Value = v.VenueID.ToString(), Text = v.VenueID + " (" + v.Name + ")" })
-                .ToList();
-            model.VenueSelectList = new SelectList(venues, "Value", "Text", model.VenueID.ToString());
+            model.VenueSelectList = RebuildVenueList(model.VenueID);
             return View(model);
         }
 
-        /* GET: Events/Edit/5
-         * Retrieves the event to be edited based on the provided ID and
-         * prepares the view for editing by populating a dropdown list of venues.
-         * Code completion assisted by Visual Studio IntelliSense
-         * (Microsoft Corporation, 2022). Version 17.8. */
+        // GET: Events/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) // Checks if the provided ID is null and returns a NotFound result if it is
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var @event = await _context.Events.FindAsync(id); // Retrieves the event from the database context based on the provided ID
-            if (@event == null)
-            {
-                return NotFound();
-            }
-
-            var venues = (await _context.Venues.ToListAsync())
-                .Select(v => new SelectListItem { Value = v.VenueID.ToString(), Text = v.VenueID + " (" + v.Name + ")" })
-                .ToList();
+            var @event = await _context.Events.FindAsync(id);
+            if (@event == null) return NotFound();
 
             var model = new Models.ViewModels.EventFormViewModel
             {
@@ -180,26 +148,19 @@ namespace CLDV6211_POE_PART1.Controllers
                 StartDate = @event.StartDate,
                 EndDate = @event.EndDate,
                 VenueID = @event.VenueID,
-                VenueSelectList = new SelectList(venues, "Value", "Text", @event.VenueID.ToString()),
+                VenueSelectList = RebuildVenueList(@event.VenueID),
                 ImageURL = @event.ImageURL
             };
 
             return View(model);
         }
 
-        /* POST: Events/Edit/5
-         * Handles the form submission for editing an existing event.
-         * Code completion assisted by Visual Studio IntelliSense
-         * (Microsoft Corporation, 2022). Version 17.8. */
-
+        // POST: Events/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Models.ViewModels.EventFormViewModel model)
         {
-            if (id != model.EventID) // Checks if the provided ID does not match the EventID of the event being edited and returns a NotFound result if they do not match
-            {
-                return NotFound();
-            }
+            if (id != model.EventID) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -208,12 +169,33 @@ namespace CLDV6211_POE_PART1.Controllers
                     var existing = await _context.Events.FindAsync(id);
                     if (existing == null) return NotFound();
 
+                    // --- FIX: Venue date-conflict check on Edit ---
+                    // This was completely missing before, allowing edits to create
+                    // overlapping events at the same venue.
+                    // The event being edited is excluded via EventID so it doesn't
+                    // conflict with its own current dates.
+                    bool venueConflict = await _context.Events
+                        .AnyAsync(e =>
+                            e.VenueID == model.VenueID &&
+                            e.EventID != model.EventID &&          // exclude this event itself
+                            e.EndDate > DateTime.Now &&            // ignore finished events
+                            e.StartDate < model.EndDate &&         // overlap condition
+                            model.StartDate < e.EndDate);          // overlap condition
+
+                    if (venueConflict)
+                    {
+                        ModelState.AddModelError(string.Empty,
+                            "This venue already has another active event scheduled during that period. " +
+                            "Please choose a different venue or adjust the event dates.");
+                        model.VenueSelectList = RebuildVenueList(model.VenueID);
+                        return View(model);
+                    }
+
                     existing.Name = model.Name;
                     existing.StartDate = model.StartDate;
                     existing.EndDate = model.EndDate;
                     existing.VenueID = model.VenueID;
 
-                    // If a new image was uploaded, replace the old one in the event-images container
                     if (model.ImageFile != null && model.ImageFile.Length > 0)
                     {
                         if (!string.IsNullOrEmpty(existing.ImageURL))
@@ -224,61 +206,32 @@ namespace CLDV6211_POE_PART1.Controllers
 
                     _context.Update(existing);
                     await _context.SaveChangesAsync();
+                    TempData["Success"] = "Event updated successfully!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EventExists(model.EventID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!EventExists(model.EventID)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
 
-            var venues = (await _context.Venues.ToListAsync())
-                .Select(v => new SelectListItem { Value = v.VenueID.ToString(), Text = v.VenueID + " (" + v.Name + ")" })
-                .ToList();
-            model.VenueSelectList = new SelectList(venues, "Value", "Text", model.VenueID.ToString());
+            model.VenueSelectList = RebuildVenueList(model.VenueID);
             return View(model);
         }
 
-        /* GET: Events/Delete/5
-         * Retrieves the event to be deleted based on the provided ID, including its associated venue,
-         * and passes it to the view for confirmation before deletion.
-         * Part 2: checks for active bookings before showing the delete confirmation view — redirects
-         * with an error message if any bookings are linked to this event.
-         * Code completion assisted by Visual Studio IntelliSense
-         *(Microsoft Corporation, 2022).Version 17.8. */
-
+        // GET: Events/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            /* Part 2 — Include Bookings so we can enforce the deletion guard check.
-             * Events with active bookings must not be deleted, per Part 2 requirements.
-             * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
-             */
             var @event = await _context.Events
                 .Include(e => e.Venue)
                 .Include(e => e.Bookings)
-                .FirstOrDefaultAsync(m => m.EventID == id);// Asynchronously finds the event with the specified ID in the database context,
-                                                           // including its associated venue, and assigns it to the variable '@event'
-            if (@event == null)
-            {
-                return NotFound();
-            }
+                .FirstOrDefaultAsync(m => m.EventID == id);
 
-            /* Part 2 — Deletion Guard: prevent deletion if the event has active bookings.
-             * This satisfies the requirement to restrict deletion of events associated with active bookings.
-             * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
-             */
+            if (@event == null) return NotFound();
+
             if (@event.Bookings.Any())
             {
                 TempData["Error"] = "Cannot delete this event because it has active bookings.";
@@ -288,58 +241,62 @@ namespace CLDV6211_POE_PART1.Controllers
             return View(@event);
         }
 
-        /* POST: Events/Delete/5
-         * Handles the form submission for confirming the deletion of an event.
-         * Part 2: deletion is blocked on the POST handler as well if active bookings exist,
-         * preventing the guard from being bypassed via a direct POST request.
-         * Code completion assisted by Visual Studio IntelliSense
-         * (Microsoft Corporation, 2022). Version 17.8. */
-
+        // POST: Events/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            /* Part 2 — Include Bookings on the POST handler to enforce deletion guard.
-             * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
-             */
             var @event = await _context.Events
                 .Include(e => e.Bookings)
                 .FirstOrDefaultAsync(e => e.EventID == id);
 
-            if (@event != null) // Checks if the event exists before attempting to remove it from the database context and save changes
+            if (@event != null)
             {
-                /* Part 2 — Deletion Guard (POST): re-check bookings to prevent bypass. */
                 if (@event.Bookings.Any())
                 {
                     TempData["Error"] = "Cannot delete this event because it has active bookings.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Delete blob from event-images container if present
                 if (!string.IsNullOrEmpty(@event.ImageURL))
                     await _blobService.DeleteEventImageAsync(@event.ImageURL);
 
-                _context.Events.Remove(@event);// Removes the event from the database context, marking it for deletion when changes are saved
+                _context.Events.Remove(@event);
             }
 
-            await _context.SaveChangesAsync();// Saves the changes to the database after removing the event, ensuring that the deletion is persisted
+            await _context.SaveChangesAsync();
             TempData["Success"] = "Event deleted successfully!";
             return RedirectToAction(nameof(Index));
         }
 
-        // Helper method to check if an event exists in the database based on the provided ID,
-        // used for handling concurrency issues during editing
-        private bool EventExists(int id)
+        // -----------------------------------------------------------------------
+        // Private helpers
+        // -----------------------------------------------------------------------
+
+        private bool EventExists(int id) =>
+            _context.Events.Any(e => e.EventID == id);
+
+        /// <summary>
+        /// Returns a populated SelectList of venues with the specified venue pre-selected.
+        /// </summary>
+        private SelectList RebuildVenueList(int selectedVenueId)
         {
-            return _context.Events.Any(e => e.EventID == id);
+            var venues = _context.Venues
+                .Select(v => new SelectListItem
+                {
+                    Value = v.VenueID.ToString(),
+                    Text = v.VenueID + " (" + v.Name + ")"
+                })
+                .ToList();
+            return new SelectList(venues, "Value", "Text", selectedVenueId.ToString());
         }
     }
 }
 
-/*References
- * Microsoft Corporation (2022) Visual Studio IntelliSense [Software]. Version 17.8. 
+/* References
+ * Microsoft Corporation (2022) Visual Studio IntelliSense [Software]. Version 17.8.
  * Available at: https://visualstudio.microsoft.com (Accessed: 22 March 2026).
- * 
- * Anthropic (2026) Claude [AI assistant]. Available at: https://claude.ai (Accessed: 23 March 2026). 
+ *
+ * Anthropic (2026) Claude [AI assistant]. Available at: https://claude.ai (Accessed: 23 March 2026).
  * Prompt used: 'How do I get database contents to display always when I start/run the app C#'.
  */

@@ -19,7 +19,7 @@
                 <h5 class="text-white fw-bold mb-0">Booking Details</h5>
             </div>
             <div class="card-body p-4">
-                <form asp-action="Create">
+                <form asp-action="Create" method="post">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
 
                     <!-- Event -->
@@ -28,6 +28,7 @@
                         <select asp-for="EventID" class="form-select" asp-items="Model.EventSelectList"
                                 style="border-radius:8px;">
                         </select>
+                        <span asp-validation-for="EventID" class="text-danger small"></span>
                     </div>
 
                     <!-- Customer Name -->
@@ -70,8 +71,8 @@
                                class="btn px-4"
                                style="background-color:#e94560; color:white; border-radius:8px;" />
                         <a asp-action="Index"
-                           class="btn btn-outline-secondary"
-                           style="border-radius:8px;">
+                               class="btn btn-outline-secondary"
+                               style="border-radius:8px;">
                             ← Back to List
                         </a>
                     </div>
@@ -82,5 +83,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

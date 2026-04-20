@@ -225,6 +225,7 @@ namespace CLDV6211_POE_PART1.Controllers
              * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
              */
             var venue = await _context.Venues
+                .Include(v => v.Bookings)
                 .Include(v => v.Events)
                 .FirstOrDefaultAsync(m => m.VenueID == id);// Asynchronously finds the venue with the specified ID in the database context, and assigns it to the variable 'venue'
             if (venue == null)
@@ -232,16 +233,13 @@ namespace CLDV6211_POE_PART1.Controllers
                 return NotFound();
             }
 
-            /* Part 2 — Deletion Guard: prevent deletion if any bookings exist for events at this venue.
-             * Check the Bookings table for any booking whose Event.VenueID matches this venue.
+            /* Part 2 — Deletion Guard: prevent deletion if the venue has active bookings.
+             * This satisfies the requirement to restrict deletion of venues associated with active bookings.
+             * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
              */
-            var hasBookings = await _context.Bookings
-                .Include(b => b.Event)
-                .AnyAsync(b => b.Event != null && b.Event.VenueID == id);
-
-            if (hasBookings)
+            if (venue.Bookings.Any() || venue.Events.Any())
             {
-                TempData["Error"] = "Cannot delete this venue because it has active bookings.";
+                TempData["Error"] = "Cannot delete this venue because it has active bookings or associated events.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -266,6 +264,7 @@ namespace CLDV6211_POE_PART1.Controllers
              * Generated with assistance from Anthropic's (2026) Claude [AI assistant].
              */
             var venue = await _context.Venues
+                .Include(v => v.Bookings)
                 .Include(v => v.Events)
                 .FirstOrDefaultAsync(v => v.VenueID == id);// Asynchronously finds the venue with the specified ID in the database context,
                                                             // and assigns it to the variable 'venue'
@@ -274,13 +273,9 @@ namespace CLDV6211_POE_PART1.Controllers
                 /* Part 2 — Deletion Guard (POST): re-check bookings on the POST handler
                  * to prevent deletion even if the GET guard is bypassed.
                  */
-                var hasBookingsPost = await _context.Bookings
-                    .Include(b => b.Event)
-                    .AnyAsync(b => b.Event != null && b.Event.VenueID == id);
-
-                if (hasBookingsPost)
+                if (venue.Bookings.Any() || venue.Events.Any())
                 {
-                    TempData["Error"] = "Cannot delete this venue because it has active bookings.";
+                    TempData["Error"] = "Cannot delete this venue because it has active bookings or associated events.";
                     return RedirectToAction(nameof(Index));
                 }
 

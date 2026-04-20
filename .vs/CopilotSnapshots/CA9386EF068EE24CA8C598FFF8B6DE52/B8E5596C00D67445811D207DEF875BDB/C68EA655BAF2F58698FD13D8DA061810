@@ -1,4 +1,4 @@
-@using CLDV6211_POE_PART1
+﻿@using CLDV6211_POE_PART1
 @using CLDV6211_POE_PART1.Models
 @model IEnumerable<CLDV6211_POE_PART1.Models.Event>
 
@@ -72,12 +72,9 @@ else
                     <!-- Card Banner -->
                     <div class="py-3 px-4"
                          style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);">
-                        @{
-                            var statusLabel = item.EndDate < DateTime.Now ? "Finished" : (item.StartDate > DateTime.Now ? "Upcoming" : "Ongoing");
-                            var badgeColor = statusLabel == "Finished" ? "#6c757d" : (statusLabel == "Upcoming" ? "#e94560" : "#28a745");
-                        }
-                        <span class="badge mb-1" style="background-color:@badgeColor;">
-                            @statusLabel
+                        <span class="badge mb-1"
+                              style="background-color:#e94560;">
+                            @(item.StartDate > DateTime.Now ? "Upcoming" : "Ongoing")
                         </span>
                         <h5 class="text-white fw-bold mb-0">@item.Name</h5>
                     </div>
