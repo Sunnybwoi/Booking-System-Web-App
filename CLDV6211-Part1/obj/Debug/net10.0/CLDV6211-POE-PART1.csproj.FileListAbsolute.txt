@@ -1010,7 +1010,6 @@ D:\GitHub-Personal\Booking System Web-App\CLDV6211-Part1\obj\Debug\net10.0\stati
 D:\GitHub-Personal\Booking System Web-App\CLDV6211-Part1\obj\Debug\net10.0\staticwebassets.development.json
 D:\GitHub-Personal\Booking System Web-App\CLDV6211-Part1\obj\Debug\net10.0\staticwebassets.build.endpoints.json
 D:\GitHub-Personal\Booking System Web-App\CLDV6211-Part1\obj\Debug\net10.0\swae.build.ex.cache
-D:\GitHub-Personal\Booking System Web-App\CLDV6211-Part1\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
 D:\GitHub-Personal\Booking System Web-App\CLDV6211-Part1\obj\Debug\net10.0\CLDV6211.1D9F7D75.Up2Date
 D:\GitHub-Personal\Booking System Web-App\CLDV6211-Part1\obj\Debug\net10.0\CLDV6211-POE-PART1.dll
 D:\GitHub-Personal\Booking System Web-App\CLDV6211-Part1\obj\Debug\net10.0\refint\CLDV6211-POE-PART1.dll

@@ -9,16 +9,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using CLDV6211_Part1.Services;
 
 namespace CLDV6211_POE_PART1.Controllers
 {
     public class EventsController : Controller
     {
         private readonly CLDV6211_DbContext _context;
-        private readonly CLDV6211_Part1.Services.BlobService _blobService;
+        private readonly IBlobService _blobService;
         private readonly ILogger<EventsController> _logger;
 
-        public EventsController(CLDV6211_DbContext context, CLDV6211_Part1.Services.BlobService blobService, ILogger<EventsController> logger)
+        public EventsController(CLDV6211_DbContext context, IBlobService blobService, ILogger<EventsController> logger)
         {
             _context = context;
             _blobService = blobService;

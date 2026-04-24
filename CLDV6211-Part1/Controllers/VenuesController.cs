@@ -20,12 +20,12 @@ namespace CLDV6211_POE_PART1.Controllers
          * Code completion assisted by Visual Studio IntelliSense
          * (Microsoft Corporation, 2022). Version 17.8.
          */
-        private readonly BlobService _blobService;
+        private readonly IBlobService _blobService;
 
         // Constructor that initializes the database context through dependency injection,
         // allowing the controller to interact with the database.
         // BlobService is also injected here to support image upload/delete operations added in Part 2.
-        public VenuesController(CLDV6211_DbContext context, BlobService blobService)
+        public VenuesController(CLDV6211_DbContext context, IBlobService blobService)
         {
             _context = context;
             _blobService = blobService;

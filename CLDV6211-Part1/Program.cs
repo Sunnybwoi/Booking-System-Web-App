@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CLDV6211_POE_PART1;
+using CLDV6211_Part1.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using CLDV6211_POE_PART1.Data;
@@ -28,7 +29,7 @@ builder.Services.AddDbContext<CLDV6211_DbContext>(options =>
 builder.Services.AddControllersWithViews();
 
 //Use scoped instead of Singleton for services that interact with the database to ensure a new instance per request
-builder.Services.AddScoped<CLDV6211_Part1.Services.BlobService>();
+builder.Services.AddScoped<IBlobService, BlobService>();
 
 var app = builder.Build();
 
@@ -86,5 +87,5 @@ catch (Exception ex)
 
 /*References
  * Microsoft Corporation (2022) Visual Studio IntelliSense [Software]. Version 17.8. 
- * Available at: https://visualstudio.microsoft.com (Accessed: 22 March 2026).
+ * Available at: https://visualstudio.microsoft.com (Accessed: 24 April 2026).
 */

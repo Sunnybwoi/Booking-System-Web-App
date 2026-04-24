@@ -10,23 +10,27 @@ using Azure.Storage.Blobs.Models;
 
 namespace CLDV6211_Part1.Services
     {
-        public class BlobService
+        public class BlobService : IBlobService
         {
             private readonly ILogger<BlobService>? _logger;
             private readonly string _connectionString;
-            private const string ContainerName = "venue-images";
-            private const string EventContainerName = "event-images";
+            private readonly string _venueImagesContainerName;
+            private readonly string _eventImagesContainerName;
 
             public BlobService(IConfiguration configuration, ILogger<BlobService> logger)
             {
                 // Azurite local emulator connection string (can be overridden in user secrets)
                 _connectionString = configuration.GetConnectionString("AzuriteStorage") ?? "UseDevelopmentStorage=true";
+                _venueImagesContainerName = configuration["BlobSettings:VenueImagesContainer"]
+                    ?? throw new InvalidOperationException("BlobSettings:VenueImagesContainer is not configured.");
+                _eventImagesContainerName = configuration["BlobSettings:EventImagesContainer"]
+                    ?? throw new InvalidOperationException("BlobSettings:EventImagesContainer is not configured.");
                 _logger = logger;
             }
 
             private async Task<BlobContainerClient> GetContainerAsync()
             {
-                return await GetContainerAsync(ContainerName);
+                return await GetContainerAsync(_venueImagesContainerName);
             }
 
             private async Task<BlobContainerClient> GetContainerAsync(string containerName)
@@ -78,7 +82,7 @@ namespace CLDV6211_Part1.Services
                 }
             }
 
-            // Upload image specifically to the 'event-images' container so events and venues use separate containers
+            // Upload image to the configured event images container.
             public async Task<string> UploadEventImageAsync(IFormFile file)
             {
                 if (file == null || file.Length == 0)
@@ -91,7 +95,7 @@ namespace CLDV6211_Part1.Services
 
                 try
                 {
-                    var container = await GetContainerAsync(EventContainerName);
+                    var container = await GetContainerAsync(_eventImagesContainerName);
                     var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
                     var blobClient = container.GetBlobClient(fileName);
 
@@ -130,7 +134,7 @@ namespace CLDV6211_Part1.Services
                 }
             }
 
-            // Delete an image from the event-images container
+            // Delete an image from the configured event images container.
             public async Task DeleteEventImageAsync(string imageUrl)
             {
                 if (string.IsNullOrEmpty(imageUrl)) return;
@@ -139,7 +143,7 @@ namespace CLDV6211_Part1.Services
                 {
                     var uri = new Uri(imageUrl);
                     var fileName = Path.GetFileName(uri.LocalPath);
-                    var container = await GetContainerAsync(EventContainerName);
+                    var container = await GetContainerAsync(_eventImagesContainerName);
                     var blobClient = container.GetBlobClient(fileName);
                     await blobClient.DeleteIfExistsAsync();
                 }
